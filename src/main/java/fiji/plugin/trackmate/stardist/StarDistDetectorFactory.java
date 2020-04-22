@@ -90,6 +90,16 @@ public class StarDistDetectorFactory< T extends RealType< T > & NativeType< T > 
 	}
 
 	@Override
+	public boolean forbidMultithreading()
+	{
+		/*
+		 * We want to run one frame after another, because the inference for one
+		 * frame takes all the resources anyway.
+		 */
+		return true;
+	}
+
+	@Override
 	public boolean setTarget( final ImgPlus< T > img, final Map< String, Object > settings )
 	{
 		this.img = img;
