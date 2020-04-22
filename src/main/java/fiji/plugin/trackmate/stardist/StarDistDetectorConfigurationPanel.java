@@ -40,7 +40,6 @@ import fiji.plugin.trackmate.detection.SpotDetectorFactory;
 import fiji.plugin.trackmate.gui.ConfigurationPanel;
 import fiji.plugin.trackmate.gui.TrackMateGUIController;
 import fiji.plugin.trackmate.util.JLabelLogger;
-import ij.ImagePlus;
 
 public class StarDistDetectorConfigurationPanel extends ConfigurationPanel
 {
@@ -65,15 +64,15 @@ public class StarDistDetectorConfigurationPanel extends ConfigurationPanel
 
 	private final Model model;
 
-	private final ImagePlus imp;
+	private final Settings settings;
 
 	/**
 	 * Create the panel.
 	 */
 	public StarDistDetectorConfigurationPanel( final Settings settings, final Model model )
 	{
+		this.settings = settings;
 		this.model = model;
-		this.imp = settings.imp;
 
 		final GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[] { 200, 0, 32 };
@@ -220,12 +219,12 @@ public class StarDistDetectorConfigurationPanel extends ConfigurationPanel
 		 * Deal with channels: the slider and channel labels are only visible if
 		 * we find more than one channel.
 		 */
-		if ( null != imp )
+		if ( null != settings.imp )
 		{
-			final int n_channels = imp.getNChannels();
+			final int n_channels = settings.imp.getNChannels();
 			sliderChannel.setMaximum( n_channels );
 			sliderChannel.setMinimum( 1 );
-			sliderChannel.setValue( imp.getChannel() );
+			sliderChannel.setValue( settings.imp.getChannel() );
 
 			if ( n_channels <= 1 )
 			{
@@ -290,16 +289,17 @@ public class StarDistDetectorConfigurationPanel extends ConfigurationPanel
 			@Override
 			public void run()
 			{
-				final Settings settings = new Settings();
-				settings.setFrom( imp );
-				final int frame = imp.getFrame() - 1;
-				settings.tstart = frame;
-				settings.tend = frame;
+				final Settings lSettings = new Settings();
+				lSettings.setFrom( settings.imp );
+				final int frame = settings.imp.getFrame() - 1;
+				lSettings.tstart = frame;
+				lSettings.tend = frame;
+				lSettings.roi = settings.roi;
 
-				settings.detectorFactory = getDetectorFactory();
-				settings.detectorSettings = getSettings();
+				lSettings.detectorFactory = getDetectorFactory();
+				lSettings.detectorSettings = getSettings();
 
-				final TrackMate trackmate = new TrackMate( settings );
+				final TrackMate trackmate = new TrackMate( lSettings );
 				trackmate.getModel().setLogger( localLogger );
 
 				final boolean detectionOk = trackmate.execDetection();
