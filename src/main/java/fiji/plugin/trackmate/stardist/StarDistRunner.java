@@ -12,6 +12,7 @@ import org.scijava.Context;
 import org.scijava.command.CommandModule;
 import org.scijava.command.CommandService;
 
+import de.csbdresden.csbdeep.commands.GenericNetwork;
 import de.csbdresden.stardist.Candidates;
 import de.csbdresden.stardist.StarDist2DModel;
 import de.csbdresden.stardist.StarDist2DNMS;
@@ -121,7 +122,7 @@ public class StarDistRunner
 			/*
 			 * Running the CNN.
 			 */
-			final Future< CommandModule > futureCNN = commandService.run( de.csbdresden.csbdeep.commands.GenericNetwork.class, false, paramsCNN );
+			final Future< CommandModule > futureCNN = commandService.run( GenericNetwork.class, false, paramsCNN );
 			final Dataset prediction = ( Dataset ) futureCNN.get().getOutput( "output" );
 
 			/*
