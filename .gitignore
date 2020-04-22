@@ -12,6 +12,9 @@
 ## Interactive tests ##
 /samples/
 
+## StarDist models ##
+/models/
+
 ## MacOSX
 .DS_Store
 
