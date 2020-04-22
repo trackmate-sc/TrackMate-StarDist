@@ -69,12 +69,15 @@ public class StarDistDetector< T extends RealType< T > & NativeType< T > > imple
 	@Override
 	public boolean process()
 	{
-
 		final long start = System.currentTimeMillis();
 
-
+		// Properly set the image to process.
+		final RandomAccessibleInterval< T > crop = Views.interval( img, interval );
+		final long[] min = new long[ interval.numDimensions() ];
+		interval.min( min );
+		final RandomAccessibleInterval< T > input = Views.zeroMin( crop );
+		
 		// Launch StarDist.
-		final RandomAccessibleInterval< T > input = Views.interval( img, interval );
 		final Pair< Candidates, RandomAccessibleInterval< FloatType > > output = StarDistRunner.run( input );
 		final Candidates polygons = output.getA();
 		final RandomAccessibleInterval< FloatType > probaImg = output.getB();
