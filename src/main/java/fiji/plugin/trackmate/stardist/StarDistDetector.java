@@ -70,6 +70,7 @@ public class StarDistDetector< T extends RealType< T > & NativeType< T > > imple
 	public boolean process()
 	{
 		final long start = System.currentTimeMillis();
+		spots.clear();
 
 		// Properly set the image to process.
 		final RandomAccessibleInterval< T > crop = Views.interval( img, interval );
@@ -79,12 +80,18 @@ public class StarDistDetector< T extends RealType< T > & NativeType< T > > imple
 		
 		// Launch StarDist.
 		final Pair< Candidates, RandomAccessibleInterval< FloatType > > output = StarDistRunner.run( input );
+		if ( null == output )
+		{
+			// Most likely we got interrupted by the user. Don't mind it and
+			// quit quietly.
+			return true;
+		}
+
 		final Candidates polygons = output.getA();
 		final RandomAccessibleInterval< FloatType > probaImg = output.getB();
 		final ImagePlus proba = ImageJFunctions.wrap( probaImg, "proba" );
 
 		// Create spots from output.
-		spots.clear();
 		for ( final Integer polygonID : polygons.getWinner() )
 		{
 			final PolygonRoi roi = polygons.getPolygonRoi( polygonID );
