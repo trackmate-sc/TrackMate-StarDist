@@ -1,13 +1,16 @@
 package fiji.plugin.trackmate.stardist;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import de.csbdresden.stardist.Candidates;
 import fiji.plugin.trackmate.Spot;
 import fiji.plugin.trackmate.detection.SpotDetector;
 import ij.ImagePlus;
 import ij.gui.PolygonRoi;
+import ij.gui.Roi;
 import ij.measure.Measurements;
 import ij.process.ImageStatistics;
 import net.imglib2.Interval;
@@ -33,7 +36,9 @@ public class StarDistDetector< T extends RealType< T > & NativeType< T > > imple
 
 	protected final double threshold;
 
-	protected List< Spot > spots = new ArrayList<>();
+	protected final List< Spot > spots = new ArrayList<>();
+
+	protected final Map< Spot, Roi > rois = new HashMap<>();
 
 	protected String baseErrorMessage;
 
@@ -71,6 +76,7 @@ public class StarDistDetector< T extends RealType< T > & NativeType< T > > imple
 	{
 		final long start = System.currentTimeMillis();
 		spots.clear();
+		rois.clear();
 
 		// Properly set the image to process.
 		final RandomAccessibleInterval< T > crop = Views.interval( img, interval );
@@ -106,6 +112,11 @@ public class StarDistDetector< T extends RealType< T > & NativeType< T > > imple
 			final double quality = stats.max;
 			final Spot spot = new Spot( x, y, z, radius, quality );
 			spots.add( spot );
+
+			roi.setLocation(
+					interval.min( 0 ) + roi.getXBase(),
+					interval.min( 1 ) + roi.getYBase() );
+			rois.put( spot, roi );
 		}
 
 		final long end = System.currentTimeMillis();
@@ -118,6 +129,12 @@ public class StarDistDetector< T extends RealType< T > & NativeType< T > > imple
 	public List< Spot > getResult()
 	{
 		return spots;
+	}
+
+	@Override
+	public Map< Spot, Roi > getRois()
+	{
+		return rois;
 	}
 
 	@Override
