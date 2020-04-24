@@ -97,12 +97,6 @@
 			<artifactId>ij</artifactId>
 		</dependency>
 		
-		<dependency>
-			<groupId>net.imagej</groupId>
-			<artifactId>ij</artifactId>
-			<version>1.52v</version>
-		</dependency>
-
 		<!-- ImageJ dependencies -->
 		<dependency>
 			<groupId>net.imagej</groupId>
