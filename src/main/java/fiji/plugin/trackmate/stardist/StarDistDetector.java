@@ -1,10 +1,12 @@
 package fiji.plugin.trackmate.stardist;
 
+import java.awt.Polygon;
 import java.util.ArrayList;
 import java.util.List;
 
 import de.csbdresden.stardist.Candidates;
 import fiji.plugin.trackmate.Spot;
+import fiji.plugin.trackmate.SpotRoi;
 import fiji.plugin.trackmate.detection.SpotDetector;
 import ij.ImagePlus;
 import ij.gui.PolygonRoi;
@@ -106,6 +108,17 @@ public class StarDistDetector< T extends RealType< T > & NativeType< T > > imple
 			final double quality = stats.max;
 			final Spot spot = new Spot( x, y, z, radius, quality );
 			spots.add( spot );
+
+			// Store the ROI in the spot.
+			final Polygon polygon = roi.getPolygon();
+			final double[] xpoly = new double[ polygon.npoints ];
+			final double[] ypoly = new double[ polygon.npoints ];
+			for ( int i = 0; i < polygon.npoints; i++ )
+			{
+				xpoly[ i ] = calibration[ 0 ] * ( interval.min( 0 ) + polygon.xpoints[ i ] ) - x;
+				ypoly[ i ] = calibration[ 1 ] * ( interval.min( 1 ) + polygon.ypoints[ i ] ) - y;
+			}
+			spot.setRoi( new SpotRoi( xpoly, ypoly ) );
 		}
 
 		final long end = System.currentTimeMillis();
