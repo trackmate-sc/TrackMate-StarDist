@@ -11,7 +11,6 @@ import fiji.plugin.trackmate.detection.SpotDetector;
 import ij.ImagePlus;
 import ij.gui.PolygonRoi;
 import ij.measure.Measurements;
-import ij.process.ImageStatistics;
 import net.imglib2.Interval;
 import net.imglib2.RandomAccessible;
 import net.imglib2.RandomAccessibleInterval;
@@ -99,29 +98,21 @@ public class StarDistDetector< T extends RealType< T > & NativeType< T > > imple
 		// Create spots from output.
 		for ( final Integer polygonID : polygons.getWinner() )
 		{
+			// Collect quality = max of proba.
 			final PolygonRoi roi = polygons.getPolygonRoi( polygonID );
 			proba.setRoi( roi );
-			final ImageStatistics stats = proba.getStatistics(
-					Measurements.AREA + Measurements.MIN_MAX + Measurements.CENTER_OF_MASS );
-			
-			final double x = calibration[ 0 ] * ( interval.min( 0 ) + stats.xCenterOfMass );
-			final double y = calibration[ 1 ] * ( interval.min( 1 ) + stats.yCenterOfMass );
-			final double z = 0.;
-			final double radius = Math.sqrt( stats.area * calibration[ 0 ] * calibration[ 1 ] / Math.PI );
-			final double quality = stats.max;
-			final Spot spot = new Spot( x, y, z, radius, quality );
-			spots.add( spot );
+			final double quality = proba.getStatistics( Measurements.MIN_MAX ).max;
 
-			// Store the ROI in the spot.
+			// Create ROI.
 			final Polygon polygon = roi.getPolygon();
 			final double[] xpoly = new double[ polygon.npoints ];
 			final double[] ypoly = new double[ polygon.npoints ];
 			for ( int i = 0; i < polygon.npoints; i++ )
 			{
-				xpoly[ i ] = calibration[ 0 ] * ( interval.min( 0 ) + polygon.xpoints[ i ] ) - x;
-				ypoly[ i ] = calibration[ 1 ] * ( interval.min( 1 ) + polygon.ypoints[ i ] ) - y;
+				xpoly[ i ] = calibration[ 0 ] * ( interval.min( 0 ) + polygon.xpoints[ i ] );
+				ypoly[ i ] = calibration[ 1 ] * ( interval.min( 1 ) + polygon.ypoints[ i ] );
 			}
-			spot.setRoi( new SpotRoi( xpoly, ypoly ) );
+			spots.add( SpotRoi.createSpot( xpoly, ypoly, quality ) );
 		}
 
 		final long end = System.currentTimeMillis();
