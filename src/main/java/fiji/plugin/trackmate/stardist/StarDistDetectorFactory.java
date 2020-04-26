@@ -75,6 +75,8 @@ public class StarDistDetectorFactory< T extends RealType< T > & NativeType< T > 
 
 	protected String errorMessage;
 
+	protected StarDistRunnerBase starDistRunner;
+
 	/*
 	 * METHODS
 	 */
@@ -85,7 +87,7 @@ public class StarDistDetectorFactory< T extends RealType< T > & NativeType< T > 
 		final double threshold = ( Double ) settings.get( KEY_THRESHOLD );
 		final double[] calibration = TMUtils.getSpatialCalibration( img );
 		final RandomAccessible< T > imFrame = prepareFrameImg( frame );
-		final StarDistDetector< T > detector = new StarDistDetector< >( imFrame, interval, calibration, threshold );
+		final StarDistDetector< T > detector = new StarDistDetector<>( starDistRunner, imFrame, interval, calibration, threshold );
 		return detector;
 	}
 
@@ -102,6 +104,12 @@ public class StarDistDetectorFactory< T extends RealType< T > & NativeType< T > 
 	@Override
 	public boolean setTarget( final ImgPlus< T > img, final Map< String, Object > settings )
 	{
+		this.starDistRunner = new StarDistRunner();
+		if ( !starDistRunner.initialize() )
+		{
+			errorMessage = starDistRunner.getErrorMessage();
+			return false;
+		}
 		this.img = img;
 		this.settings = settings;
 		return checkSettings( settings );

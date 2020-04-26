@@ -43,8 +43,11 @@ public class StarDistDetector< T extends RealType< T > & NativeType< T > > imple
 
 	protected long processingTime;
 
-	public StarDistDetector( final RandomAccessible< T > img, final Interval interval, final double[] calibration, final double threshold )
+	protected final StarDistRunnerBase stardistRunner;
+
+	public StarDistDetector( final StarDistRunnerBase stardistRunner, final RandomAccessible< T > img, final Interval interval, final double[] calibration, final double threshold )
 	{
+		this.stardistRunner = stardistRunner;
 		this.img = img;
 		this.interval = interval;
 		this.calibration = calibration;
@@ -81,7 +84,7 @@ public class StarDistDetector< T extends RealType< T > & NativeType< T > > imple
 		final RandomAccessibleInterval< T > input = Views.zeroMin( crop );
 		
 		// Launch StarDist.
-		final Pair< Candidates, RandomAccessibleInterval< FloatType > > output = StarDistRunner.run( input );
+		final Pair< Candidates, RandomAccessibleInterval< FloatType > > output = stardistRunner.run( input );
 		if ( null == output )
 		{
 			// Most likely we got interrupted by the user. Don't mind it and
