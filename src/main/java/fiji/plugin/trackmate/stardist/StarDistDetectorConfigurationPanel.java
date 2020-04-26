@@ -1,12 +1,10 @@
 package fiji.plugin.trackmate.stardist;
 
 import static fiji.plugin.trackmate.detection.DetectorKeys.KEY_TARGET_CHANNEL;
-import static fiji.plugin.trackmate.detection.DetectorKeys.KEY_THRESHOLD;
 import static fiji.plugin.trackmate.gui.TrackMateWizard.BIG_FONT;
 import static fiji.plugin.trackmate.gui.TrackMateWizard.FONT;
 import static fiji.plugin.trackmate.gui.TrackMateWizard.SMALL_FONT;
 
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -14,8 +12,6 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.URL;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -23,7 +19,6 @@ import java.util.Map;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JSlider;
 import javax.swing.SwingConstants;
@@ -52,11 +47,7 @@ public class StarDistDetectorConfigurationPanel extends ConfigurationPanel
 
 	private static final ImageIcon ICON_PREVIEW = new ImageIcon( TrackMateGUIController.class.getResource( "images/flag_checked.png" ) );
 
-	private static final NumberFormat THRESHOLD_FORMAT = new DecimalFormat( "#.##" );
-
 	private final JSlider sliderChannel;
-
-	private final JFormattedTextField ftfThreshold;
 
 	private final JButton btnPreview;
 
@@ -159,30 +150,6 @@ public class StarDistDetectorConfigurationPanel extends ConfigurationPanel
 		add( labelChannel, gbc_labelChannel );
 
 		/*
-		 * Threshold.
-		 */
-
-		final JLabel lblThreshold = new JLabel( "Threshold:" );
-		lblThreshold.setFont( SMALL_FONT );
-		final GridBagConstraints gbc_lblThreshold = new GridBagConstraints();
-		gbc_lblThreshold.anchor = GridBagConstraints.EAST;
-		gbc_lblThreshold.insets = new Insets( 5, 5, 5, 5 );
-		gbc_lblThreshold.gridx = 0;
-		gbc_lblThreshold.gridy = 4;
-		add( lblThreshold, gbc_lblThreshold );
-
-		ftfThreshold = new JFormattedTextField( THRESHOLD_FORMAT );
-		ftfThreshold.setMinimumSize( new Dimension( 60, 26 ) );
-		ftfThreshold.setHorizontalAlignment( SwingConstants.CENTER );
-		ftfThreshold.setFont( FONT );
-		final GridBagConstraints gbc_ftfThreshold = new GridBagConstraints();
-		gbc_ftfThreshold.gridwidth = 2;
-		gbc_ftfThreshold.insets = new Insets( 5, 5, 5, 5 );
-		gbc_ftfThreshold.gridx = 1;
-		gbc_ftfThreshold.gridy = 4;
-		add( ftfThreshold, gbc_ftfThreshold );
-
-		/*
 		 * Preview.
 		 */
 
@@ -255,9 +222,7 @@ public class StarDistDetectorConfigurationPanel extends ConfigurationPanel
 	{
 		final HashMap< String, Object > settings = new HashMap<>( 2 );
 		final int targetChannel = sliderChannel.getValue();
-		final double threshold = ( ( Number ) ftfThreshold.getValue() ).doubleValue();
 		settings.put( KEY_TARGET_CHANNEL, targetChannel );
-		settings.put( KEY_THRESHOLD, threshold );
 		return settings;
 	}
 
@@ -265,7 +230,6 @@ public class StarDistDetectorConfigurationPanel extends ConfigurationPanel
 	public void setSettings( final Map< String, Object > settings )
 	{
 		sliderChannel.setValue( ( Integer ) settings.get( KEY_TARGET_CHANNEL ) );
-		ftfThreshold.setValue( settings.get( KEY_THRESHOLD ) );
 	}
 
 	@Override

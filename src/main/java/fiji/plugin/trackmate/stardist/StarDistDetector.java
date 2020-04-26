@@ -32,8 +32,6 @@ public class StarDistDetector< T extends RealType< T > & NativeType< T > > imple
 
 	protected final double[] calibration;
 
-	protected final double threshold;
-
 	protected List< Spot > spots = new ArrayList<>();
 
 	protected String baseErrorMessage;
@@ -44,13 +42,12 @@ public class StarDistDetector< T extends RealType< T > & NativeType< T > > imple
 
 	protected final StarDistRunnerBase stardistRunner;
 
-	public StarDistDetector( final StarDistRunnerBase stardistRunner, final RandomAccessible< T > img, final Interval interval, final double[] calibration, final double threshold )
+	public StarDistDetector( final StarDistRunnerBase stardistRunner, final RandomAccessible< T > img, final Interval interval, final double[] calibration )
 	{
 		this.stardistRunner = stardistRunner;
 		this.img = img;
 		this.interval = interval;
 		this.calibration = calibration;
-		this.threshold = threshold;
 		this.baseErrorMessage = BASE_ERROR_MESSAGE;
 	}
 

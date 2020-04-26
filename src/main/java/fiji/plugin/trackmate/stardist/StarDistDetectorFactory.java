@@ -1,10 +1,7 @@
 package fiji.plugin.trackmate.stardist;
 
 import static fiji.plugin.trackmate.detection.DetectorKeys.DEFAULT_TARGET_CHANNEL;
-import static fiji.plugin.trackmate.detection.DetectorKeys.DEFAULT_THRESHOLD;
 import static fiji.plugin.trackmate.detection.DetectorKeys.KEY_TARGET_CHANNEL;
-import static fiji.plugin.trackmate.detection.DetectorKeys.KEY_THRESHOLD;
-import static fiji.plugin.trackmate.io.IOUtils.readDoubleAttribute;
 import static fiji.plugin.trackmate.io.IOUtils.readIntegerAttribute;
 import static fiji.plugin.trackmate.io.IOUtils.writeTargetChannel;
 import static fiji.plugin.trackmate.io.IOUtils.writeThreshold;
@@ -84,10 +81,9 @@ public class StarDistDetectorFactory< T extends RealType< T > & NativeType< T > 
 	@Override
 	public SpotDetector< T > getDetector( final Interval interval, final int frame )
 	{
-		final double threshold = ( Double ) settings.get( KEY_THRESHOLD );
 		final double[] calibration = TMUtils.getSpatialCalibration( img );
 		final RandomAccessible< T > imFrame = prepareFrameImg( frame );
-		final StarDistDetector< T > detector = new StarDistDetector<>( starDistRunner, imFrame, interval, calibration, threshold );
+		final StarDistDetector< T > detector = new StarDistDetector<>( starDistRunner, imFrame, interval, calibration );
 		return detector;
 	}
 
@@ -141,7 +137,6 @@ public class StarDistDetectorFactory< T extends RealType< T > & NativeType< T > 
 		settings.clear();
 		final StringBuilder errorHolder = new StringBuilder();
 		boolean ok = true;
-		ok = ok & readDoubleAttribute( element, settings, KEY_THRESHOLD, errorHolder );
 		ok = ok & readIntegerAttribute( element, settings, KEY_TARGET_CHANNEL, errorHolder );
 		if ( !ok )
 		{
@@ -160,29 +155,25 @@ public class StarDistDetectorFactory< T extends RealType< T > & NativeType< T > 
 	@Override
 	public Map< String, Object > getDefaultSettings()
 	{
-		final Map< String, Object > lSettings = new HashMap<>();
-		lSettings.put( KEY_TARGET_CHANNEL, DEFAULT_TARGET_CHANNEL );
-		lSettings.put( KEY_THRESHOLD, DEFAULT_THRESHOLD );
-		return lSettings;
+		final Map< String, Object > settings = new HashMap<>();
+		settings.put( KEY_TARGET_CHANNEL, DEFAULT_TARGET_CHANNEL );
+		return settings;
 	}
 
 	@Override
-	public boolean checkSettings( final Map< String, Object > lSettings )
+	public boolean checkSettings( final Map< String, Object > settings )
 	{
 		boolean ok = true;
 		final StringBuilder errorHolder = new StringBuilder();
-		ok = ok & checkParameter( lSettings, KEY_TARGET_CHANNEL, Integer.class, errorHolder );
-		ok = ok & checkParameter( lSettings, KEY_THRESHOLD, Double.class, errorHolder );
+		ok = ok & checkParameter( settings, KEY_TARGET_CHANNEL, Integer.class, errorHolder );
 		final List< String > mandatoryKeys = new ArrayList<>();
 		mandatoryKeys.add( KEY_TARGET_CHANNEL );
-		mandatoryKeys.add( KEY_THRESHOLD );
-		ok = ok & checkMapKeys( lSettings, mandatoryKeys, null, errorHolder );
+		ok = ok & checkMapKeys( settings, mandatoryKeys, null, errorHolder );
 		if ( !ok )
 			errorMessage = errorHolder.toString();
 
 		return ok;
 	}
-
 
 	@Override
 	public String getInfoText()
@@ -228,9 +219,8 @@ public class StarDistDetectorFactory< T extends RealType< T > & NativeType< T > 
 		if ( timeDim >= 0 )
 		{
 			if ( cDim >= 0 && timeDim > cDim )
-			{
 				timeDim--;
-			}
+
 			imFrame = Views.hyperSlice( imFrame, timeDim, frame );
 		}
 
