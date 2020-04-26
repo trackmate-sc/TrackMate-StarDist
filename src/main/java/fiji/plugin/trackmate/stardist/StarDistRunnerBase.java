@@ -90,11 +90,11 @@ public abstract class StarDistRunnerBase
 
 	private StarDist2DModel model;
 
-	private String errorMessage;
+	protected String errorMessage;
 
 	private File modelFile;
 
-	protected abstract StarDist2DModel getModel();
+	protected abstract StarDist2DModel getModel() throws Exception;
 
 	/**
 	 * Initializes this StarDist runner. Must be called before
@@ -107,7 +107,16 @@ public abstract class StarDistRunnerBase
 	public boolean initialize()
 	{
 		this.errorMessage = null;
-		this.model = getModel();
+		try
+		{
+			this.model = getModel();
+		}
+		catch ( final Exception e )
+		{
+			errorMessage = "Could not generate StarDist model: " + e.getMessage();
+			return false;
+		}
+
 		if ( !model.canGetFile() )
 		{
 			errorMessage = "Invalid model file. Make sure the model is packaged as a zip or as a jar.";
