@@ -259,6 +259,12 @@ public class StarDistDetectorConfigurationPanel extends ConfigurationPanel
 				lSettings.tstart = frame;
 				lSettings.tend = frame;
 				lSettings.roi = settings.roi;
+				lSettings.xstart = settings.xstart;
+				lSettings.xend = settings.xend;
+				lSettings.ystart = settings.ystart;
+				lSettings.yend = settings.yend;
+				lSettings.zstart = settings.zstart;
+				lSettings.zend = settings.zend;
 
 				lSettings.detectorFactory = getDetectorFactory();
 				lSettings.detectorSettings = getSettings();
@@ -279,16 +285,14 @@ public class StarDistDetectorConfigurationPanel extends ConfigurationPanel
 				final Iterator< Spot > it = newspots.iterator( frame, false );
 				final ArrayList< Spot > spotsToCopy = new ArrayList<>( newspots.getNSpots( frame, false ) );
 				while ( it.hasNext() )
-				{
 					spotsToCopy.add( it.next() );
-				}
+
 				// Pass new spot list to model.
 				model.getSpots().put( frame, spotsToCopy );
 				// Make them visible
 				for ( final Spot spot : spotsToCopy )
-				{
 					spot.putFeature( SpotCollection.VISIBLITY, SpotCollection.ONE );
-				}
+
 				// Generate event for listener to reflect changes.
 				model.setSpots( model.getSpots(), true );
 
