@@ -29,7 +29,7 @@ public class StarDistTestDrive
 
 		@SuppressWarnings( "unchecked" )
 		final RandomAccessibleInterval< T > img = ( RandomAccessibleInterval< T > ) dataset.getImgPlus().getImg();
-		final Pair< Candidates, RandomAccessibleInterval< FloatType > > output = StarDistRunner.run( img );
+		final Pair< Candidates, RandomAccessibleInterval< FloatType > > output = new StarDistRunner().run( img );
 
 		final Candidates polygons = output.getA();
 
@@ -49,6 +49,5 @@ public class StarDistTestDrive
 		}
 
 		System.out.println( "Finished!" );
-
 	}
 }
