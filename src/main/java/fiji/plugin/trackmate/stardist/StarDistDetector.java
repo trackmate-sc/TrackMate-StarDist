@@ -83,9 +83,12 @@ public class StarDistDetector< T extends RealType< T > & NativeType< T > > imple
 		final Pair< Candidates, RandomAccessibleInterval< FloatType > > output = stardistRunner.run( input );
 		if ( null == output )
 		{
-			// Most likely we got interrupted by the user. Don't mind it and
-			// quit quietly.
-			return true;
+			/*
+			 * Most likely we got interrupted by the user. Don't mind it and
+			 * quit quietly.
+			 */
+			errorMessage = "Detector interrupted.\n";
+			return false;
 		}
 
 		final Candidates polygons = output.getA();
