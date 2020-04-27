@@ -70,10 +70,6 @@ public class StarDistCustomDetectorFactory< T extends RealType< T > & NativeType
 		this.img = img;
 		this.settings = settings;
 		final boolean ok = checkSettings( settings );
-
-		System.out.println( ok ); // DEBUG
-		System.out.println( getErrorMessage() ); // DEBUG
-
 		if ( !ok )
 			return false;
 
