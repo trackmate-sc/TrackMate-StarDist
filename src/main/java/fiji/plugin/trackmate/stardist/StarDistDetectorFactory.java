@@ -4,7 +4,6 @@ import static fiji.plugin.trackmate.detection.DetectorKeys.DEFAULT_TARGET_CHANNE
 import static fiji.plugin.trackmate.detection.DetectorKeys.KEY_TARGET_CHANNEL;
 import static fiji.plugin.trackmate.io.IOUtils.readIntegerAttribute;
 import static fiji.plugin.trackmate.io.IOUtils.writeTargetChannel;
-import static fiji.plugin.trackmate.io.IOUtils.writeThreshold;
 import static fiji.plugin.trackmate.util.TMUtils.checkMapKeys;
 import static fiji.plugin.trackmate.util.TMUtils.checkParameter;
 
@@ -122,8 +121,7 @@ public class StarDistDetectorFactory< T extends RealType< T > & NativeType< T > 
 	public boolean marshall( final Map< String, Object > settings, final Element element )
 	{
 		final StringBuilder errorHolder = new StringBuilder();
-		final boolean ok = writeTargetChannel( settings, element, errorHolder )
-				&& writeThreshold( settings, element, errorHolder );
+		final boolean ok = writeTargetChannel( settings, element, errorHolder );
 
 		if ( !ok )
 			errorMessage = errorHolder.toString();
