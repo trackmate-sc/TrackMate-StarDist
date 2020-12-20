@@ -1,29 +1,18 @@
 package fiji.plugin.trackmate.stardist;
 
 import static fiji.plugin.trackmate.detection.DetectorKeys.KEY_TARGET_CHANNEL;
-import static fiji.plugin.trackmate.detection.DetectorKeys.KEY_THRESHOLD;
 import static fiji.plugin.trackmate.gui.TrackMateWizard.BIG_FONT;
 import static fiji.plugin.trackmate.gui.TrackMateWizard.FONT;
 import static fiji.plugin.trackmate.gui.TrackMateWizard.SMALL_FONT;
 
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.net.URL;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JSlider;
 import javax.swing.SwingConstants;
@@ -33,46 +22,25 @@ import javax.swing.event.ChangeListener;
 import fiji.plugin.trackmate.Logger;
 import fiji.plugin.trackmate.Model;
 import fiji.plugin.trackmate.Settings;
-import fiji.plugin.trackmate.Spot;
-import fiji.plugin.trackmate.SpotCollection;
-import fiji.plugin.trackmate.TrackMate;
 import fiji.plugin.trackmate.detection.SpotDetectorFactory;
-import fiji.plugin.trackmate.gui.ConfigurationPanel;
-import fiji.plugin.trackmate.gui.TrackMateGUIController;
 import fiji.plugin.trackmate.util.JLabelLogger;
 
-public class StarDistDetectorConfigurationPanel extends ConfigurationPanel
+public class StarDistDetectorConfigurationPanel extends StarDistDetectorBaseConfigurationPanel
 {
 
 	private static final long serialVersionUID = 1L;
 
 	private static final String TITLE = "StarDist detector";
 
-	protected static final ImageIcon ICON = new ImageIcon( getResource( "images/TrackMateStarDist-logo100x100.png" ) );
-
-	private static final ImageIcon ICON_PREVIEW = new ImageIcon( TrackMateGUIController.class.getResource( "images/flag_checked.png" ) );
-
-	private static final NumberFormat THRESHOLD_FORMAT = new DecimalFormat( "#.##" );
-
 	private final JSlider sliderChannel;
-
-	private final JFormattedTextField ftfThreshold;
 
 	private final JButton btnPreview;
 
 	private final Logger localLogger;
 
-	private final Model model;
-
-	private final Settings settings;
-
-	/**
-	 * Create the panel.
-	 */
 	public StarDistDetectorConfigurationPanel( final Settings settings, final Model model )
 	{
-		this.settings = settings;
-		this.model = model;
+		super( settings, model );
 
 		final GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[] { 200, 0, 32 };
@@ -159,30 +127,6 @@ public class StarDistDetectorConfigurationPanel extends ConfigurationPanel
 		add( labelChannel, gbc_labelChannel );
 
 		/*
-		 * Threshold.
-		 */
-
-		final JLabel lblThreshold = new JLabel( "Threshold:" );
-		lblThreshold.setFont( SMALL_FONT );
-		final GridBagConstraints gbc_lblThreshold = new GridBagConstraints();
-		gbc_lblThreshold.anchor = GridBagConstraints.EAST;
-		gbc_lblThreshold.insets = new Insets( 5, 5, 5, 5 );
-		gbc_lblThreshold.gridx = 0;
-		gbc_lblThreshold.gridy = 4;
-		add( lblThreshold, gbc_lblThreshold );
-
-		ftfThreshold = new JFormattedTextField( THRESHOLD_FORMAT );
-		ftfThreshold.setMinimumSize( new Dimension( 60, 26 ) );
-		ftfThreshold.setHorizontalAlignment( SwingConstants.CENTER );
-		ftfThreshold.setFont( FONT );
-		final GridBagConstraints gbc_ftfThreshold = new GridBagConstraints();
-		gbc_ftfThreshold.gridwidth = 2;
-		gbc_ftfThreshold.insets = new Insets( 5, 5, 5, 5 );
-		gbc_ftfThreshold.gridx = 1;
-		gbc_ftfThreshold.gridy = 4;
-		add( ftfThreshold, gbc_ftfThreshold );
-
-		/*
 		 * Preview.
 		 */
 
@@ -240,14 +184,7 @@ public class StarDistDetectorConfigurationPanel extends ConfigurationPanel
 			}
 		}
 
-		btnPreview.addActionListener( new ActionListener()
-		{
-			@Override
-			public void actionPerformed( final ActionEvent e )
-			{
-				preview();
-			}
-		} );
+		btnPreview.addActionListener( l -> preview( btnPreview, localLogger ) );
 	}
 
 	@Override
@@ -255,9 +192,7 @@ public class StarDistDetectorConfigurationPanel extends ConfigurationPanel
 	{
 		final HashMap< String, Object > settings = new HashMap<>( 2 );
 		final int targetChannel = sliderChannel.getValue();
-		final double threshold = ( ( Number ) ftfThreshold.getValue() ).doubleValue();
 		settings.put( KEY_TARGET_CHANNEL, targetChannel );
-		settings.put( KEY_THRESHOLD, threshold );
 		return settings;
 	}
 
@@ -265,77 +200,16 @@ public class StarDistDetectorConfigurationPanel extends ConfigurationPanel
 	public void setSettings( final Map< String, Object > settings )
 	{
 		sliderChannel.setValue( ( Integer ) settings.get( KEY_TARGET_CHANNEL ) );
-		ftfThreshold.setValue( settings.get( KEY_THRESHOLD ) );
 	}
 
 	@Override
 	public void clean()
 	{}
 
+	@Override
 	@SuppressWarnings( "rawtypes" )
 	protected SpotDetectorFactory< ? > getDetectorFactory()
 	{
 		return new StarDistDetectorFactory();
-	}
-
-	/**
-	 * Launch detection on the current frame.
-	 */
-	protected void preview()
-	{
-		btnPreview.setEnabled( false );
-		new Thread( "TrackMate preview detection thread" )
-		{
-			@Override
-			public void run()
-			{
-				final Settings lSettings = new Settings();
-				lSettings.setFrom( settings.imp );
-				final int frame = settings.imp.getFrame() - 1;
-				lSettings.tstart = frame;
-				lSettings.tend = frame;
-				lSettings.roi = settings.roi;
-
-				lSettings.detectorFactory = getDetectorFactory();
-				lSettings.detectorSettings = getSettings();
-
-				final TrackMate trackmate = new TrackMate( lSettings );
-				trackmate.getModel().setLogger( localLogger );
-
-				final boolean detectionOk = trackmate.execDetection();
-				if ( !detectionOk )
-				{
-					localLogger.error( trackmate.getErrorMessage() );
-					return;
-				}
-				localLogger.log( "Found " + trackmate.getModel().getSpots().getNSpots( false ) + " spots." );
-
-				// Wrap new spots in a list.
-				final SpotCollection newspots = trackmate.getModel().getSpots();
-				final Iterator< Spot > it = newspots.iterator( frame, false );
-				final ArrayList< Spot > spotsToCopy = new ArrayList<>( newspots.getNSpots( frame, false ) );
-				while ( it.hasNext() )
-				{
-					spotsToCopy.add( it.next() );
-				}
-				// Pass new spot list to model.
-				model.getSpots().put( frame, spotsToCopy );
-				// Make them visible
-				for ( final Spot spot : spotsToCopy )
-				{
-					spot.putFeature( SpotCollection.VISIBLITY, SpotCollection.ONE );
-				}
-				// Generate event for listener to reflect changes.
-				model.setSpots( model.getSpots(), true );
-
-				btnPreview.setEnabled( true );
-
-			}
-		}.start();
-	}
-
-	protected static URL getResource( final String name )
-	{
-		return StarDistDetectorFactory.class.getClassLoader().getResource( name );
 	}
 }

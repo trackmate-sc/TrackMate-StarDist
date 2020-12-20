@@ -1,18 +1,16 @@
 package fiji.plugin.trackmate.stardist;
 
+import java.awt.Polygon;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import de.csbdresden.stardist.Candidates;
 import fiji.plugin.trackmate.Spot;
+import fiji.plugin.trackmate.SpotRoi;
 import fiji.plugin.trackmate.detection.SpotDetector;
 import ij.ImagePlus;
 import ij.gui.PolygonRoi;
-import ij.gui.Roi;
 import ij.measure.Measurements;
-import ij.process.ImageStatistics;
 import net.imglib2.Interval;
 import net.imglib2.RandomAccessible;
 import net.imglib2.RandomAccessibleInterval;
@@ -34,11 +32,7 @@ public class StarDistDetector< T extends RealType< T > & NativeType< T > > imple
 
 	protected final double[] calibration;
 
-	protected final double threshold;
-
 	protected final List< Spot > spots = new ArrayList<>();
-
-	protected final Map< Spot, Roi > rois = new HashMap<>();
 
 	protected String baseErrorMessage;
 
@@ -46,12 +40,14 @@ public class StarDistDetector< T extends RealType< T > & NativeType< T > > imple
 
 	protected long processingTime;
 
-	public StarDistDetector( final RandomAccessible< T > img, final Interval interval, final double[] calibration, final double threshold )
+	protected final StarDistRunnerBase stardistRunner;
+
+	public StarDistDetector( final StarDistRunnerBase stardistRunner, final RandomAccessible< T > img, final Interval interval, final double[] calibration )
 	{
+		this.stardistRunner = stardistRunner;
 		this.img = img;
 		this.interval = interval;
 		this.calibration = calibration;
-		this.threshold = threshold;
 		this.baseErrorMessage = BASE_ERROR_MESSAGE;
 	}
 
@@ -76,7 +72,6 @@ public class StarDistDetector< T extends RealType< T > & NativeType< T > > imple
 	{
 		final long start = System.currentTimeMillis();
 		spots.clear();
-		rois.clear();
 
 		// Properly set the image to process.
 		final RandomAccessibleInterval< T > crop = Views.interval( img, interval );
@@ -85,12 +80,15 @@ public class StarDistDetector< T extends RealType< T > & NativeType< T > > imple
 		final RandomAccessibleInterval< T > input = Views.zeroMin( crop );
 		
 		// Launch StarDist.
-		final Pair< Candidates, RandomAccessibleInterval< FloatType > > output = StarDistRunner.run( input );
+		final Pair< Candidates, RandomAccessibleInterval< FloatType > > output = stardistRunner.run( input );
 		if ( null == output )
 		{
-			// Most likely we got interrupted by the user. Don't mind it and
-			// quit quietly.
-			return true;
+			/*
+			 * Most likely we got interrupted by the user. Don't mind it and
+			 * quit quietly.
+			 */
+			errorMessage = "Detector interrupted.\n";
+			return false;
 		}
 
 		final Candidates polygons = output.getA();
@@ -100,23 +98,21 @@ public class StarDistDetector< T extends RealType< T > & NativeType< T > > imple
 		// Create spots from output.
 		for ( final Integer polygonID : polygons.getWinner() )
 		{
+			// Collect quality = max of proba.
 			final PolygonRoi roi = polygons.getPolygonRoi( polygonID );
 			proba.setRoi( roi );
-			final ImageStatistics stats = proba.getStatistics(
-					Measurements.AREA + Measurements.MIN_MAX + Measurements.CENTER_OF_MASS );
-			
-			final double x = calibration[ 0 ] * ( interval.min( 0 ) + stats.xCenterOfMass );
-			final double y = calibration[ 1 ] * ( interval.min( 1 ) + stats.yCenterOfMass );
-			final double z = 0.;
-			final double radius = Math.sqrt( stats.area * calibration[ 0 ] * calibration[ 1 ] / Math.PI );
-			final double quality = stats.max;
-			final Spot spot = new Spot( x, y, z, radius, quality );
-			spots.add( spot );
+			final double quality = proba.getStatistics( Measurements.MIN_MAX ).max;
 
-			roi.setLocation(
-					interval.min( 0 ) + roi.getXBase(),
-					interval.min( 1 ) + roi.getYBase() );
-			rois.put( spot, roi );
+			// Create ROI.
+			final Polygon polygon = roi.getPolygon();
+			final double[] xpoly = new double[ polygon.npoints ];
+			final double[] ypoly = new double[ polygon.npoints ];
+			for ( int i = 0; i < polygon.npoints; i++ )
+			{
+				xpoly[ i ] = calibration[ 0 ] * ( interval.min( 0 ) + polygon.xpoints[ i ] );
+				ypoly[ i ] = calibration[ 1 ] * ( interval.min( 1 ) + polygon.ypoints[ i ] );
+			}
+			spots.add( SpotRoi.createSpot( xpoly, ypoly, quality ) );
 		}
 
 		final long end = System.currentTimeMillis();
@@ -129,12 +125,6 @@ public class StarDistDetector< T extends RealType< T > & NativeType< T > > imple
 	public List< Spot > getResult()
 	{
 		return spots;
-	}
-
-	@Override
-	public Map< Spot, Roi > getRois()
-	{
-		return rois;
 	}
 
 	@Override

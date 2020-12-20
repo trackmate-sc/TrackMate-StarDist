@@ -97,12 +97,6 @@
 			<artifactId>ij</artifactId>
 		</dependency>
 		
-		<dependency>
-			<groupId>net.imagej</groupId>
-			<artifactId>ij</artifactId>
-			<version>1.52v</version>
-		</dependency>
-
 		<!-- ImageJ dependencies -->
 		<dependency>
 			<groupId>net.imagej</groupId>
@@ -152,5 +146,10 @@
 			<scope>test</scope>
 		</dependency>
 
+		<dependency>
+			<groupId>math.geom2d</groupId>
+			<artifactId>javaGeom</artifactId>
+			<version>0.11.1</version>
+		</dependency>
 	</dependencies>
 </project>
