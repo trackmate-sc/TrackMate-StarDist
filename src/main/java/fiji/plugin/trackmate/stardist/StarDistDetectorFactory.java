@@ -237,4 +237,9 @@ public class StarDistDetectorFactory< T extends RealType< T > & NativeType< T > 
 		return imFrame;
 	}
 
+	@Override
+	public boolean has2Dsegmentation()
+	{
+		return true;
+	}
 }

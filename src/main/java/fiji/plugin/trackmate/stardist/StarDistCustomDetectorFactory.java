@@ -196,4 +196,10 @@ public class StarDistCustomDetectorFactory< T extends RealType< T > & NativeType
 	{
 		return NAME;
 	}
+
+	@Override
+	public boolean has2Dsegmentation()
+	{
+		return true;
+	}
 }
