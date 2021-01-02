@@ -13,7 +13,7 @@ public class TrackerTestDrive
 	{
 		final ImageJ ij = new ImageJ();
 		ij.launch( args );
-		final LoadTrackMatePlugIn_ plugIn = new LoadTrackMatePlugIn_();
+		final LoadTrackMatePlugIn plugIn = new LoadTrackMatePlugIn();
 		plugIn.run( "samples/P31-crop.xml" );
 	}
 }

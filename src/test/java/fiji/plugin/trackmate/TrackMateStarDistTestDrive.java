@@ -15,7 +15,7 @@ public class TrackMateStarDistTestDrive
 		final Dataset dataset = ( Dataset ) ij.io().open( "samples/P31-crop.tif" );
 		ij.ui().show( dataset );
 
-		new TrackMatePlugIn_().run( null );
+		new TrackMatePlugIn().run( null );
 	}
 
 }
