@@ -7,6 +7,7 @@ import java.util.List;
 import de.csbdresden.stardist.Candidates;
 import fiji.plugin.trackmate.Spot;
 import fiji.plugin.trackmate.SpotRoi;
+import fiji.plugin.trackmate.detection.DetectionUtils;
 import fiji.plugin.trackmate.detection.SpotDetector;
 import ij.ImagePlus;
 import ij.gui.PolygonRoi;
@@ -46,7 +47,7 @@ public class StarDistDetector< T extends RealType< T > & NativeType< T > > imple
 	{
 		this.stardistRunner = stardistRunner;
 		this.img = img;
-		this.interval = interval;
+		this.interval = DetectionUtils.squeeze( interval );
 		this.calibration = calibration;
 		this.baseErrorMessage = BASE_ERROR_MESSAGE;
 	}
