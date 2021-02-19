@@ -1,9 +1,10 @@
 package fiji.plugin.trackmate.stardist;
 
 import static fiji.plugin.trackmate.detection.DetectorKeys.KEY_TARGET_CHANNEL;
-import static fiji.plugin.trackmate.gui.TrackMateWizard.BIG_FONT;
-import static fiji.plugin.trackmate.gui.TrackMateWizard.FONT;
-import static fiji.plugin.trackmate.gui.TrackMateWizard.SMALL_FONT;
+import static fiji.plugin.trackmate.gui.Fonts.BIG_FONT;
+import static fiji.plugin.trackmate.gui.Fonts.FONT;
+import static fiji.plugin.trackmate.gui.Fonts.SMALL_FONT;
+import static fiji.plugin.trackmate.gui.Icons.PREVIEW_ICON;
 import static fiji.plugin.trackmate.stardist.StarDistCustomDetectorFactory.KEY_MODEL_FILEPATH;
 import static fiji.plugin.trackmate.stardist.StarDistCustomDetectorFactory.KEY_OVERLAP_THRESHOLD;
 import static fiji.plugin.trackmate.stardist.StarDistCustomDetectorFactory.KEY_SCORE_THRESHOLD;
@@ -231,7 +232,7 @@ public class StarDistCustomDetectorConfigurationPanel extends StarDistDetectorBa
 		 * Preview.
 		 */
 
-		btnPreview = new JButton( "Preview", ICON_PREVIEW );
+		btnPreview = new JButton( "Preview", PREVIEW_ICON );
 		btnPreview.setFont( FONT );
 		final GridBagConstraints gbc_btnPreview = new GridBagConstraints();
 		gbc_btnPreview.gridwidth = 2;
