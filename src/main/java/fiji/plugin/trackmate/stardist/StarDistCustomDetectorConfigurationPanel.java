@@ -184,7 +184,7 @@ public class StarDistCustomDetectorConfigurationPanel extends StarDistDetectorBa
 		 * Score threshold.
 		 */
 
-		final JLabel lblScoreTreshold = new JLabel( "Score treshold:" );
+		final JLabel lblScoreTreshold = new JLabel( "Score threshold:" );
 		lblScoreTreshold.setFont( SMALL_FONT );
 		final GridBagConstraints gbc_lblScoreTreshold = new GridBagConstraints();
 		gbc_lblScoreTreshold.anchor = GridBagConstraints.EAST;

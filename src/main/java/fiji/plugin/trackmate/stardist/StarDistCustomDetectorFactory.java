@@ -83,7 +83,7 @@ public class StarDistCustomDetectorFactory< T extends RealType< T > & NativeType
 			errorMessage = starDistRunner.getErrorMessage();
 			return false;
 		}
-		return checkSettings( settings );
+		return true;
 	}
 
 	@Override
