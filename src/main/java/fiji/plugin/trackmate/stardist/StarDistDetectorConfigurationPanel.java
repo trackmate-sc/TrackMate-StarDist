@@ -23,6 +23,7 @@ import javax.swing.event.ChangeListener;
 import fiji.plugin.trackmate.Logger;
 import fiji.plugin.trackmate.Model;
 import fiji.plugin.trackmate.Settings;
+import fiji.plugin.trackmate.detection.DetectionUtils;
 import fiji.plugin.trackmate.detection.SpotDetectorFactory;
 import fiji.plugin.trackmate.util.JLabelLogger;
 
@@ -34,10 +35,6 @@ public class StarDistDetectorConfigurationPanel extends StarDistDetectorBaseConf
 	private static final String TITLE = "StarDist detector";
 
 	private final JSlider sliderChannel;
-
-	private final JButton btnPreview;
-
-	private final Logger localLogger;
 
 	public StarDistDetectorConfigurationPanel( final Settings settings, final Model model )
 	{
@@ -131,7 +128,7 @@ public class StarDistDetectorConfigurationPanel extends StarDistDetectorBaseConf
 		 * Preview.
 		 */
 
-		btnPreview = new JButton( "Preview", PREVIEW_ICON );
+		final JButton btnPreview = new JButton( "Preview", PREVIEW_ICON );
 		btnPreview.setFont( FONT );
 		final GridBagConstraints gbc_btnPreview = new GridBagConstraints();
 		gbc_btnPreview.gridwidth = 2;
@@ -154,7 +151,7 @@ public class StarDistDetectorConfigurationPanel extends StarDistDetectorBaseConf
 		gbc_labelLogger.gridx = 0;
 		gbc_labelLogger.gridy = 6;
 		add( labelLogger, gbc_labelLogger );
-		localLogger = labelLogger.getLogger();
+		final Logger localLogger = labelLogger.getLogger();
 
 		/*
 		 * Listeners and specificities.
@@ -185,7 +182,14 @@ public class StarDistDetectorConfigurationPanel extends StarDistDetectorBaseConf
 			}
 		}
 
-		btnPreview.addActionListener( l -> preview( btnPreview, localLogger ) );
+		btnPreview.addActionListener( e -> DetectionUtils.preview(
+				model,
+				settings,
+				getDetectorFactory(),
+				getSettings(),
+				settings.imp.getFrame() - 1,
+				localLogger,
+				b -> btnPreview.setEnabled( b ) ) );
 	}
 
 	@Override

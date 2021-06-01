@@ -32,6 +32,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import fiji.plugin.trackmate.Logger;
 import fiji.plugin.trackmate.Model;
 import fiji.plugin.trackmate.Settings;
+import fiji.plugin.trackmate.detection.DetectionUtils;
 import fiji.plugin.trackmate.detection.SpotDetectorFactory;
 import fiji.plugin.trackmate.stardist.util.FileChooser;
 import fiji.plugin.trackmate.stardist.util.FileChooser.DialogType;
@@ -49,8 +50,6 @@ public class StarDistCustomDetectorConfigurationPanel extends StarDistDetectorBa
 	private static final FileFilter fileFilter = new FileNameExtensionFilter( "Models stored as zip files.", "zip" );
 
 	private final JSlider sliderChannel;
-
-	private final JButton btnPreview;
 
 	private final Logger localLogger;
 
@@ -232,7 +231,7 @@ public class StarDistCustomDetectorConfigurationPanel extends StarDistDetectorBa
 		 * Preview.
 		 */
 
-		btnPreview = new JButton( "Preview", PREVIEW_ICON );
+		final JButton btnPreview = new JButton( "Preview", PREVIEW_ICON );
 		btnPreview.setFont( FONT );
 		final GridBagConstraints gbc_btnPreview = new GridBagConstraints();
 		gbc_btnPreview.gridwidth = 2;
@@ -285,7 +284,14 @@ public class StarDistCustomDetectorConfigurationPanel extends StarDistDetectorBa
 			}
 		}
 
-		btnPreview.addActionListener( l -> preview( btnPreview, localLogger ) );
+		btnPreview.addActionListener( e -> DetectionUtils.preview(
+				model,
+				settings,
+				getDetectorFactory(),
+				getSettings(),
+				settings.imp.getFrame() - 1,
+				localLogger,
+				b -> btnPreview.setEnabled( b ) ) );
 		btnBrowse.addActionListener( l -> browse() );
 	}
 
