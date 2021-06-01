@@ -11,6 +11,7 @@ public class LoadTrackMateStarDistTestDrive
 	{
 		final ImageJ ij = new ImageJ();
 		ij.launch( args );
-		new LoadTrackMatePlugIn().run( "samples/P31-crop.xml" );
+//		new LoadTrackMatePlugIn().run( "samples/P31-crop.xml" );
+		new LoadTrackMatePlugIn().run( "../TrackMate/samples/CellMigration.xml" );
 	}
 }
