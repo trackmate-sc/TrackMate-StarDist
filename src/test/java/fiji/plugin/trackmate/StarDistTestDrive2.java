@@ -135,10 +135,6 @@ public class StarDistTestDrive2
 
 	/**
 	 * Copied from Star-dist source code.
-	 * 
-	 * @param prediction
-	 * @param dataset
-	 * @return
 	 */
 	private static Pair< Dataset, Dataset > splitPrediction( final Dataset prediction, final DatasetService dataset )
 	{
