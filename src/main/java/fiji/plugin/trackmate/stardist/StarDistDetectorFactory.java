@@ -55,7 +55,11 @@ public class StarDistDetectorFactory< T extends RealType< T > & NativeType< T > 
 			+ "segmentation results, with a radius set from the cell area, and a "
 			+ "quality equal to the maximal value of the probability image in the cell. "
 			+ "<p>"
-			+ "The treshold on quality corresponds to a probability value, ranging from 0 to 1."
+			+ "    "
+			+ "<p>"
+			+ "If you use this detector for your work, please be so kind as to "
+			+ "also cite the StarDist IJ paper: <i>Uwe Schmidt, Martin Weigert, Coleman Broaddus, and Gene Myers. "
+			+ "Cell Detection with Star-convex Polygons. MICCAI, Granada, Spain, September 2018.</i>"
 			+ "</html>";
 
 	/*

@@ -62,6 +62,12 @@ public class StarDistCustomDetectorFactory< T extends RealType< T > & NativeType
 			+ "It only works for 2D images."
 			+ "And for this detector to work, the update sites StartDist and CSBDeep "
 			+ "must be activated in your Fiji installation."
+			+ "<p>"
+			+ "    "
+			+ "<p>"
+			+ "If you use this detector for your work, please be so kind as to "
+			+ "also cite the StarDist IJ paper: <i>Uwe Schmidt, Martin Weigert, Coleman Broaddus, and Gene Myers. "
+			+ "Cell Detection with Star-convex Polygons. MICCAI, Granada, Spain, September 2018.</i>"
 			+ "</html>";
 
 	@Override
