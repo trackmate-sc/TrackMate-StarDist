@@ -69,8 +69,8 @@
 		<url>https://github.com/tinevez/TrackMate-StarDist/issues</url>
 	</issueManagement>
 	<ciManagement>
-		<system>Travis CI</system>
-		<url>https://travis-ci.org/tinevez/TrackMate-StarDist</url>
+		<system>GitHub Actions</system>
+		<url>https://github.com/tinevez/TrackMate-StarDist/actions</url>
 	</ciManagement>
 
 	<properties>
