@@ -1,3 +1,24 @@
+/*-
+ * #%L
+ * Fiji distribution of ImageJ for the life sciences.
+ * %%
+ * Copyright (C) 2020 - 2021 The Institut Pasteur.
+ * %%
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public
+ * License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/gpl-3.0.html>.
+ * #L%
+ */
 package fiji.plugin.trackmate.stardist;
 
 import static fiji.plugin.trackmate.detection.DetectorKeys.KEY_TARGET_CHANNEL;
@@ -32,6 +53,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import fiji.plugin.trackmate.Logger;
 import fiji.plugin.trackmate.Model;
 import fiji.plugin.trackmate.Settings;
+import fiji.plugin.trackmate.detection.DetectionUtils;
 import fiji.plugin.trackmate.detection.SpotDetectorFactory;
 import fiji.plugin.trackmate.stardist.util.FileChooser;
 import fiji.plugin.trackmate.stardist.util.FileChooser.DialogType;
@@ -49,8 +71,6 @@ public class StarDistCustomDetectorConfigurationPanel extends StarDistDetectorBa
 	private static final FileFilter fileFilter = new FileNameExtensionFilter( "Models stored as zip files.", "zip" );
 
 	private final JSlider sliderChannel;
-
-	private final JButton btnPreview;
 
 	private final Logger localLogger;
 
@@ -232,7 +252,7 @@ public class StarDistCustomDetectorConfigurationPanel extends StarDistDetectorBa
 		 * Preview.
 		 */
 
-		btnPreview = new JButton( "Preview", PREVIEW_ICON );
+		final JButton btnPreview = new JButton( "Preview", PREVIEW_ICON );
 		btnPreview.setFont( FONT );
 		final GridBagConstraints gbc_btnPreview = new GridBagConstraints();
 		gbc_btnPreview.gridwidth = 2;
@@ -285,7 +305,14 @@ public class StarDistCustomDetectorConfigurationPanel extends StarDistDetectorBa
 			}
 		}
 
-		btnPreview.addActionListener( l -> preview( btnPreview, localLogger ) );
+		btnPreview.addActionListener( e -> DetectionUtils.preview(
+				model,
+				settings,
+				getDetectorFactory(),
+				getSettings(),
+				settings.imp.getFrame() - 1,
+				localLogger,
+				b -> btnPreview.setEnabled( b ) ) );
 		btnBrowse.addActionListener( l -> browse() );
 	}
 
