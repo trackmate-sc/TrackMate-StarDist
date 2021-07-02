@@ -1,3 +1,5 @@
+[![](https://github.com/tinevez/TrackMate-StarDist/actions/workflows/build-main.yml/badge.svg)](https://github.com/tinevez/TrackMate-StarDist/actions/workflows/build-main.yml)
+
 # TrackMate-StarDist
 
 A TrackMate detector that uses StarDist to segment object.
