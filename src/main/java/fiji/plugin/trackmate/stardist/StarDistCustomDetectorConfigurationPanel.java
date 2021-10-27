@@ -356,7 +356,8 @@ public class StarDistCustomDetectorConfigurationPanel extends StarDistDetectorBa
 		try
 		{
 			final File file = FileChooser.chooseFile( this, modelFileTextField.getText(), fileFilter, "Select a model file", DialogType.LOAD );
-			modelFileTextField.setText( file.getAbsolutePath() );
+			if ( file != null )
+				modelFileTextField.setText( file.getAbsolutePath() );
 		}
 		finally
 		{
