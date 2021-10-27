@@ -226,4 +226,10 @@ public class StarDistDetectorFactory< T extends RealType< T > & NativeType< T > 
 	{
 		return true;
 	}
+
+	@Override
+	public StarDistCustomDetectorFactory< T > copy()
+	{
+		return new StarDistCustomDetectorFactory<>();
+	}
 }
