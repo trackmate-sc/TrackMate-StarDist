@@ -83,7 +83,6 @@ public abstract class StarDistRunnerBase
 		final boolean normalizeInput = true;
 		final double percentileBottom = 1.0;
 		final double percentileTop = 99.8;
-		final int nTiles = 1;
 		final boolean showCsbdeepProgress = false;
 		final int excludeBoundary = 2;
 		final boolean verbose = false;
@@ -96,7 +95,7 @@ public abstract class StarDistRunnerBase
 		PARAMS_CNN.put( "percentileBottom", percentileBottom );
 		PARAMS_CNN.put( "percentileTop", percentileTop );
 		PARAMS_CNN.put( "clip", false );
-		PARAMS_CNN.put( "nTiles", nTiles );
+		//PARAMS_CNN.put( "nTiles", nTiles );
 		PARAMS_CNN.put( "batchSize", 1 );
 		PARAMS_CNN.put( "showProgressDialog", showCsbdeepProgress );
 
@@ -160,10 +159,18 @@ public abstract class StarDistRunnerBase
 		return errorMessage;
 	}
 
-	public < T extends Type< T > > Pair< Candidates, RandomAccessibleInterval< FloatType > > run( final RandomAccessibleInterval< T > input )
-	{
+	public < T extends Type< T > > Pair< Candidates, RandomAccessibleInterval< FloatType > > run( final RandomAccessibleInterval< T > input ) {
+
 		this.errorMessage = null;
 
+		/*
+			Seems to be the limit for StarDist not to fail
+		 */
+		final long dim = input.dimension(0) * input.dimension(1);
+		float maxSize = 1000000;
+		final float divisionResults = dim / maxSize;
+		final int nbTiles = (int) Math.ceil(divisionResults);
+		
 		/*
 		 * Adapt parameters for specific model.
 		 */
@@ -174,8 +181,10 @@ public abstract class StarDistRunnerBase
 		paramsCNN.put( "blockMultiple", model.sizeDivBy );
 		paramsCNN.put( "overlap", model.tileOverlap );
 		paramsCNN.put( "modelFile", modelFile );
+		paramsCNN.put( "nTiles", nbTiles );
 		paramsNMS.put( "probThresh", model.probThresh );
 		paramsNMS.put( "nmsThresh", model.nmsThresh );
+
 
 		try
 		{

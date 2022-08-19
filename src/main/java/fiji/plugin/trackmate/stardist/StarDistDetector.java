@@ -100,9 +100,10 @@ public class StarDistDetector< T extends RealType< T > & NativeType< T > > imple
 		final long[] min = new long[ interval.numDimensions() ];
 		interval.min( min );
 		final RandomAccessibleInterval< T > input = Views.zeroMin( crop );
-		
+
 		// Launch StarDist.
-		final Pair< Candidates, RandomAccessibleInterval< FloatType > > output = stardistRunner.run( input );
+		final Pair<Candidates, RandomAccessibleInterval<FloatType>> output = stardistRunner.run(input);
+
 		if ( null == output )
 		{
 			/*
