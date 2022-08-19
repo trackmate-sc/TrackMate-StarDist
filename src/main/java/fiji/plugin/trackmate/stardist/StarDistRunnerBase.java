@@ -160,11 +160,16 @@ public abstract class StarDistRunnerBase
 	}
 
 	public < T extends Type< T > > Pair< Candidates, RandomAccessibleInterval< FloatType > > run( final RandomAccessibleInterval< T > input ) {
-        return run( input, 1);
-    }
 
-    public < T extends Type< T > > Pair< Candidates, RandomAccessibleInterval< FloatType > > run( final RandomAccessibleInterval< T > input, final int nbTiles ) {
 		this.errorMessage = null;
+
+		/*
+			Seems to be the limit for StarDist not to fail
+		 */
+		final long dim = input.dimension(0) * input.dimension(1);
+		float maxSize = 1000000;
+		final float divisionResults = dim / maxSize;
+		final int nbTiles = (int) Math.ceil(divisionResults);
 		
 		/*
 		 * Adapt parameters for specific model.
