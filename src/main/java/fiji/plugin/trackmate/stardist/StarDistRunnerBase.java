@@ -89,13 +89,12 @@ public abstract class StarDistRunnerBase
 		final String roiPosition = "Hyperstack";
 
 		/*
-		 * CNN parameters. Defaults are good.
+		 * CNN parameters. Defaults are good. N tiles is determined on the fly.
 		 */
 		PARAMS_CNN.put( "normalizeInput", normalizeInput );
 		PARAMS_CNN.put( "percentileBottom", percentileBottom );
 		PARAMS_CNN.put( "percentileTop", percentileTop );
 		PARAMS_CNN.put( "clip", false );
-		//PARAMS_CNN.put( "nTiles", nTiles );
 		PARAMS_CNN.put( "batchSize", 1 );
 		PARAMS_CNN.put( "showProgressDialog", showCsbdeepProgress );
 
@@ -164,11 +163,13 @@ public abstract class StarDistRunnerBase
 		this.errorMessage = null;
 
 		/*
-		 * Seems to be the limit for StarDist not to fail
+		 * Seems to be the limit for StarDist not to fail. We observed that 1000
+		 * x 1000 tiles were ok, but larger than 1000 lines failed.
 		 */
+
 		final long dim = input.dimension( 0 ) * input.dimension( 1 );
-		final float maxSize = 1_000_000;
-		final float divisionResults = dim / maxSize;
+		final double maxSize = 1_000_000.;
+		final double divisionResults = dim / maxSize;
 		final int nbTiles = ( int ) Math.ceil( divisionResults );
 
 		/*
