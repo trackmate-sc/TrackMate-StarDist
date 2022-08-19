@@ -64,7 +64,11 @@ public class StarDistDetector< T extends RealType< T > & NativeType< T > > imple
 
 	protected final StarDistRunnerBase stardistRunner;
 
-	public StarDistDetector( final StarDistRunnerBase stardistRunner, final RandomAccessible< T > img, final Interval interval, final double[] calibration )
+	public StarDistDetector(
+			final StarDistRunnerBase stardistRunner,
+			final RandomAccessible< T > img,
+			final Interval interval,
+			final double[] calibration )
 	{
 		this.stardistRunner = stardistRunner;
 		this.img = img;
@@ -102,7 +106,7 @@ public class StarDistDetector< T extends RealType< T > & NativeType< T > > imple
 		final RandomAccessibleInterval< T > input = Views.zeroMin( crop );
 
 		// Launch StarDist.
-		final Pair<Candidates, RandomAccessibleInterval<FloatType>> output = stardistRunner.run(input);
+		final Pair< Candidates, RandomAccessibleInterval< FloatType > > output = stardistRunner.run( input );
 
 		if ( null == output )
 		{

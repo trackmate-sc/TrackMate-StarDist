@@ -164,13 +164,13 @@ public abstract class StarDistRunnerBase
 		this.errorMessage = null;
 
 		/*
-			Seems to be the limit for StarDist not to fail
+		 * Seems to be the limit for StarDist not to fail
 		 */
-		final long dim = input.dimension(0) * input.dimension(1);
-		float maxSize = 1000000;
+		final long dim = input.dimension( 0 ) * input.dimension( 1 );
+		final float maxSize = 1_000_000;
 		final float divisionResults = dim / maxSize;
-		final int nbTiles = (int) Math.ceil(divisionResults);
-		
+		final int nbTiles = ( int ) Math.ceil( divisionResults );
+
 		/*
 		 * Adapt parameters for specific model.
 		 */
