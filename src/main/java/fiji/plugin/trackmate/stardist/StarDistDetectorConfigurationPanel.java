@@ -70,24 +70,24 @@ public class StarDistDetectorConfigurationPanel extends StarDistDetectorBaseConf
 
 		final JLabel lblSettingsForDetector = new JLabel( "Settings for detector:" );
 		lblSettingsForDetector.setFont( FONT );
-		final GridBagConstraints gbc_lblSettingsForDetector = new GridBagConstraints();
-		gbc_lblSettingsForDetector.gridwidth = 3;
-		gbc_lblSettingsForDetector.insets = new Insets( 5, 5, 5, 5 );
-		gbc_lblSettingsForDetector.fill = GridBagConstraints.HORIZONTAL;
-		gbc_lblSettingsForDetector.gridx = 0;
-		gbc_lblSettingsForDetector.gridy = 0;
-		add( lblSettingsForDetector, gbc_lblSettingsForDetector );
+		final GridBagConstraints gbcLblSettingsForDetector = new GridBagConstraints();
+		gbcLblSettingsForDetector.gridwidth = 3;
+		gbcLblSettingsForDetector.insets = new Insets( 5, 5, 5, 5 );
+		gbcLblSettingsForDetector.fill = GridBagConstraints.HORIZONTAL;
+		gbcLblSettingsForDetector.gridx = 0;
+		gbcLblSettingsForDetector.gridy = 0;
+		add( lblSettingsForDetector, gbcLblSettingsForDetector );
 
 		final JLabel lblStardistDetector = new JLabel( TITLE, ICON, JLabel.RIGHT );
 		lblStardistDetector.setFont( BIG_FONT );
 		lblStardistDetector.setHorizontalAlignment( SwingConstants.CENTER );
-		final GridBagConstraints gbc_lblStardistDetector = new GridBagConstraints();
-		gbc_lblStardistDetector.gridwidth = 3;
-		gbc_lblStardistDetector.insets = new Insets( 5, 5, 5, 5 );
-		gbc_lblStardistDetector.fill = GridBagConstraints.HORIZONTAL;
-		gbc_lblStardistDetector.gridx = 0;
-		gbc_lblStardistDetector.gridy = 1;
-		add( lblStardistDetector, gbc_lblStardistDetector );
+		final GridBagConstraints gbcLblStardistDetector = new GridBagConstraints();
+		gbcLblStardistDetector.gridwidth = 3;
+		gbcLblStardistDetector.insets = new Insets( 5, 5, 5, 5 );
+		gbcLblStardistDetector.fill = GridBagConstraints.HORIZONTAL;
+		gbcLblStardistDetector.gridx = 0;
+		gbcLblStardistDetector.gridy = 1;
+		add( lblStardistDetector, gbcLblStardistDetector );
 
 		/*
 		 * Help text.
@@ -97,14 +97,14 @@ public class StarDistDetectorConfigurationPanel extends StarDistDetectorBaseConf
 				.replace( "<p>", "<p align=\"justify\">" )
 				.replace( "<html>", "<html><p align=\"justify\">" ) );
 		lblHelptext.setFont( FONT.deriveFont( Font.ITALIC ) );
-		final GridBagConstraints gbc_lblHelptext = new GridBagConstraints();
-		gbc_lblHelptext.anchor = GridBagConstraints.NORTH;
-		gbc_lblHelptext.fill = GridBagConstraints.HORIZONTAL;
-		gbc_lblHelptext.gridwidth = 3;
-		gbc_lblHelptext.insets = new Insets( 5, 5, 5, 5 );
-		gbc_lblHelptext.gridx = 0;
-		gbc_lblHelptext.gridy = 2;
-		add( lblHelptext, gbc_lblHelptext );
+		final GridBagConstraints gbcLblHelptext = new GridBagConstraints();
+		gbcLblHelptext.anchor = GridBagConstraints.NORTH;
+		gbcLblHelptext.fill = GridBagConstraints.HORIZONTAL;
+		gbcLblHelptext.gridwidth = 3;
+		gbcLblHelptext.insets = new Insets( 5, 5, 5, 5 );
+		gbcLblHelptext.gridx = 0;
+		gbcLblHelptext.gridy = 2;
+		add( lblHelptext, gbcLblHelptext );
 
 		/*
 		 * Channel selector.
@@ -113,12 +113,12 @@ public class StarDistDetectorConfigurationPanel extends StarDistDetectorBaseConf
 
 		final JLabel lblSegmentInChannel = new JLabel( "Segment in channel:" );
 		lblSegmentInChannel.setFont( SMALL_FONT );
-		final GridBagConstraints gbc_lblSegmentInChannel = new GridBagConstraints();
-		gbc_lblSegmentInChannel.anchor = GridBagConstraints.EAST;
-		gbc_lblSegmentInChannel.insets = new Insets( 5, 5, 5, 5 );
-		gbc_lblSegmentInChannel.gridx = 0;
-		gbc_lblSegmentInChannel.gridy = 3;
-		add( lblSegmentInChannel, gbc_lblSegmentInChannel );
+		final GridBagConstraints gbcLblSegmentInChannel = new GridBagConstraints();
+		gbcLblSegmentInChannel.anchor = GridBagConstraints.EAST;
+		gbcLblSegmentInChannel.insets = new Insets( 5, 5, 5, 5 );
+		gbcLblSegmentInChannel.gridx = 0;
+		gbcLblSegmentInChannel.gridy = 3;
+		add( lblSegmentInChannel, gbcLblSegmentInChannel );
 
 		sliderChannel = new JSlider();
 		final JLabel labelChannel = new JLabel( "1" );
@@ -130,20 +130,20 @@ public class StarDistDetectorConfigurationPanel extends StarDistDetectorBaseConf
 				labelChannel.setText( "" + sliderChannel.getValue() );
 			}
 		} );
-		final GridBagConstraints gbc_sliderChannel = new GridBagConstraints();
-		gbc_sliderChannel.fill = GridBagConstraints.HORIZONTAL;
-		gbc_sliderChannel.insets = new Insets( 5, 5, 5, 5 );
-		gbc_sliderChannel.gridx = 1;
-		gbc_sliderChannel.gridy = 3;
-		add( sliderChannel, gbc_sliderChannel );
+		final GridBagConstraints gbcSliderChannel = new GridBagConstraints();
+		gbcSliderChannel.fill = GridBagConstraints.HORIZONTAL;
+		gbcSliderChannel.insets = new Insets( 5, 5, 5, 5 );
+		gbcSliderChannel.gridx = 1;
+		gbcSliderChannel.gridy = 3;
+		add( sliderChannel, gbcSliderChannel );
 
 		labelChannel.setHorizontalAlignment( SwingConstants.CENTER );
 		labelChannel.setFont( SMALL_FONT );
-		final GridBagConstraints gbc_labelChannel = new GridBagConstraints();
-		gbc_labelChannel.insets = new Insets( 5, 5, 5, 5 );
-		gbc_labelChannel.gridx = 2;
-		gbc_labelChannel.gridy = 3;
-		add( labelChannel, gbc_labelChannel );
+		final GridBagConstraints gbcLabelChannel = new GridBagConstraints();
+		gbcLabelChannel.insets = new Insets( 5, 5, 5, 5 );
+		gbcLabelChannel.gridx = 2;
+		gbcLabelChannel.gridy = 3;
+		add( labelChannel, gbcLabelChannel );
 
 		/*
 		 * Preview.
@@ -151,27 +151,27 @@ public class StarDistDetectorConfigurationPanel extends StarDistDetectorBaseConf
 
 		final JButton btnPreview = new JButton( "Preview", PREVIEW_ICON );
 		btnPreview.setFont( FONT );
-		final GridBagConstraints gbc_btnPreview = new GridBagConstraints();
-		gbc_btnPreview.gridwidth = 2;
-		gbc_btnPreview.fill = GridBagConstraints.HORIZONTAL;
-		gbc_btnPreview.anchor = GridBagConstraints.SOUTH;
-		gbc_btnPreview.insets = new Insets( 5, 5, 5, 5 );
-		gbc_btnPreview.gridx = 1;
-		gbc_btnPreview.gridy = 5;
-		add( btnPreview, gbc_btnPreview );
+		final GridBagConstraints gbcBtnPreview = new GridBagConstraints();
+		gbcBtnPreview.gridwidth = 2;
+		gbcBtnPreview.fill = GridBagConstraints.HORIZONTAL;
+		gbcBtnPreview.anchor = GridBagConstraints.SOUTH;
+		gbcBtnPreview.insets = new Insets( 5, 5, 5, 5 );
+		gbcBtnPreview.gridx = 1;
+		gbcBtnPreview.gridy = 5;
+		add( btnPreview, gbcBtnPreview );
 
 		/*
 		 * Logger.
 		 */
 
 		final JLabelLogger labelLogger = new JLabelLogger();
-		final GridBagConstraints gbc_labelLogger = new GridBagConstraints();
-		gbc_labelLogger.anchor = GridBagConstraints.EAST;
-		gbc_labelLogger.gridwidth = 3;
-		gbc_labelLogger.insets = new Insets( 0, 0, 0, 5 );
-		gbc_labelLogger.gridx = 0;
-		gbc_labelLogger.gridy = 6;
-		add( labelLogger, gbc_labelLogger );
+		final GridBagConstraints gbcLabelLogger = new GridBagConstraints();
+		gbcLabelLogger.anchor = GridBagConstraints.EAST;
+		gbcLabelLogger.gridwidth = 3;
+		gbcLabelLogger.insets = new Insets( 0, 0, 0, 5 );
+		gbcLabelLogger.gridx = 0;
+		gbcLabelLogger.gridy = 6;
+		add( labelLogger, gbcLabelLogger );
 		final Logger localLogger = labelLogger.getLogger();
 
 		/*
