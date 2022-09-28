@@ -268,11 +268,13 @@ public class StarDistCustomDetectorConfigurationPanel extends StarDistDetectorBa
 		 */
 
 		final JLabelLogger labelLogger = new JLabelLogger();
+		labelLogger.setHorizontalAlignment( SwingConstants.TRAILING );
 		final GridBagConstraints gbcLabelLogger = new GridBagConstraints();
-		gbcLabelLogger.anchor = GridBagConstraints.EAST;
+		gbcLabelLogger.fill = GridBagConstraints.HORIZONTAL;
 		gbcLabelLogger.gridwidth = 3;
 		gbcLabelLogger.gridx = 0;
 		gbcLabelLogger.gridy = 9;
+		gbcLabelLogger.insets = new Insets( 5, 5, 5, 5 );
 		add( labelLogger, gbcLabelLogger );
 		localLogger = labelLogger.getLogger();
 
