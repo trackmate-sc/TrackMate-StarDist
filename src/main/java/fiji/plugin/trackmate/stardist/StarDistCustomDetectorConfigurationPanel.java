@@ -25,13 +25,11 @@ import static fiji.plugin.trackmate.detection.DetectorKeys.KEY_TARGET_CHANNEL;
 import static fiji.plugin.trackmate.gui.Fonts.BIG_FONT;
 import static fiji.plugin.trackmate.gui.Fonts.FONT;
 import static fiji.plugin.trackmate.gui.Fonts.SMALL_FONT;
-import static fiji.plugin.trackmate.gui.Icons.PREVIEW_ICON;
 import static fiji.plugin.trackmate.stardist.StarDistCustomDetectorFactory.KEY_MODEL_FILEPATH;
 import static fiji.plugin.trackmate.stardist.StarDistCustomDetectorFactory.KEY_OVERLAP_THRESHOLD;
 import static fiji.plugin.trackmate.stardist.StarDistCustomDetectorFactory.KEY_SCORE_THRESHOLD;
 
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -50,14 +48,13 @@ import javax.swing.SwingConstants;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import fiji.plugin.trackmate.Logger;
 import fiji.plugin.trackmate.Model;
 import fiji.plugin.trackmate.Settings;
-import fiji.plugin.trackmate.detection.DetectionUtils;
 import fiji.plugin.trackmate.detection.SpotDetectorFactory;
+import fiji.plugin.trackmate.gui.GuiUtils;
 import fiji.plugin.trackmate.stardist.util.FileChooser;
 import fiji.plugin.trackmate.stardist.util.FileChooser.DialogType;
-import fiji.plugin.trackmate.util.JLabelLogger;
+import fiji.plugin.trackmate.util.DetectionPreview;
 
 public class StarDistCustomDetectorConfigurationPanel extends StarDistDetectorBaseConfigurationPanel
 {
@@ -71,8 +68,6 @@ public class StarDistCustomDetectorConfigurationPanel extends StarDistDetectorBa
 	private static final FileFilter fileFilter = new FileNameExtensionFilter( "Models stored as zip files.", "zip" );
 
 	private final JSlider sliderChannel;
-
-	private final Logger localLogger;
 
 	private final JTextField modelFileTextField;
 
@@ -91,20 +86,10 @@ public class StarDistCustomDetectorConfigurationPanel extends StarDistDetectorBa
 
 		final GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[] { 200, 0, 32 };
-		gridBagLayout.rowHeights = new int[] { 0, 0, 84, 0, 27, 0, 0, 0, 55, 23 };
+		gridBagLayout.rowHeights = new int[] { 0, 84, 0, 27, 0, 0, 0, 55, 23 };
 		gridBagLayout.columnWeights = new double[] { 1.0, 1.0, 0.0 };
-		gridBagLayout.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
+		gridBagLayout.rowWeights = new double[] { 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
 		setLayout( gridBagLayout );
-
-		final JLabel lblSettingsForDetector = new JLabel( "Settings for detector:" );
-		lblSettingsForDetector.setFont( FONT );
-		final GridBagConstraints gbcLblSettingsForDetector = new GridBagConstraints();
-		gbcLblSettingsForDetector.gridwidth = 3;
-		gbcLblSettingsForDetector.insets = new Insets( 5, 5, 5, 0 );
-		gbcLblSettingsForDetector.fill = GridBagConstraints.HORIZONTAL;
-		gbcLblSettingsForDetector.gridx = 0;
-		gbcLblSettingsForDetector.gridy = 0;
-		add( lblSettingsForDetector, gbcLblSettingsForDetector );
 
 		final JLabel lblStardistDetector = new JLabel( TITLE, ICON, JLabel.RIGHT );
 		lblStardistDetector.setFont( BIG_FONT );
@@ -114,25 +99,22 @@ public class StarDistCustomDetectorConfigurationPanel extends StarDistDetectorBa
 		gbcLblStardistDetector.insets = new Insets( 5, 5, 5, 0 );
 		gbcLblStardistDetector.fill = GridBagConstraints.HORIZONTAL;
 		gbcLblStardistDetector.gridx = 0;
-		gbcLblStardistDetector.gridy = 1;
+		gbcLblStardistDetector.gridy = 0;
 		add( lblStardistDetector, gbcLblStardistDetector );
 
 		/*
 		 * Help text.
 		 */
-		final JLabel lblHelptext = new JLabel( StarDistCustomDetectorFactory.INFO_TEXT
-				.replace( "<br>", "" )
-				.replace( "<p>", "<p align=\"justify\">" )
-				.replace( "<html>", "<html><p align=\"justify\">" ) );
-		lblHelptext.setFont( FONT.deriveFont( Font.ITALIC ) );
+
 		final GridBagConstraints gbcLblHelptext = new GridBagConstraints();
 		gbcLblHelptext.anchor = GridBagConstraints.NORTH;
-		gbcLblHelptext.fill = GridBagConstraints.HORIZONTAL;
+		gbcLblHelptext.fill = GridBagConstraints.BOTH;
 		gbcLblHelptext.gridwidth = 3;
 		gbcLblHelptext.insets = new Insets( 5, 5, 5, 5 );
 		gbcLblHelptext.gridx = 0;
-		gbcLblHelptext.gridy = 2;
-		add( lblHelptext, gbcLblHelptext );
+		gbcLblHelptext.gridy = 1;
+		add( GuiUtils.textInScrollPanel( GuiUtils.infoDisplay( StarDistCustomDetectorFactory.INFO_TEXT ) ),
+				gbcLblHelptext );
 
 		/*
 		 * Channel selector.
@@ -144,7 +126,7 @@ public class StarDistCustomDetectorConfigurationPanel extends StarDistDetectorBa
 		gbcLblSegmentInChannel.anchor = GridBagConstraints.EAST;
 		gbcLblSegmentInChannel.insets = new Insets( 5, 5, 5, 5 );
 		gbcLblSegmentInChannel.gridx = 0;
-		gbcLblSegmentInChannel.gridy = 3;
+		gbcLblSegmentInChannel.gridy = 2;
 		add( lblSegmentInChannel, gbcLblSegmentInChannel );
 
 		sliderChannel = new JSlider();
@@ -152,7 +134,7 @@ public class StarDistCustomDetectorConfigurationPanel extends StarDistDetectorBa
 		gbcSliderChannel.fill = GridBagConstraints.HORIZONTAL;
 		gbcSliderChannel.insets = new Insets( 5, 5, 5, 5 );
 		gbcSliderChannel.gridx = 1;
-		gbcSliderChannel.gridy = 3;
+		gbcSliderChannel.gridy = 2;
 		add( sliderChannel, gbcSliderChannel );
 
 		final JLabel labelChannel = new JLabel( "1" );
@@ -161,7 +143,7 @@ public class StarDistCustomDetectorConfigurationPanel extends StarDistDetectorBa
 		final GridBagConstraints gbcLabelChannel = new GridBagConstraints();
 		gbcLabelChannel.insets = new Insets( 5, 5, 5, 5 );
 		gbcLabelChannel.gridx = 2;
-		gbcLabelChannel.gridy = 3;
+		gbcLabelChannel.gridy = 2;
 		add( labelChannel, gbcLabelChannel );
 
 		sliderChannel.addChangeListener( l -> labelChannel.setText( "" + sliderChannel.getValue() ) );
@@ -176,7 +158,7 @@ public class StarDistCustomDetectorConfigurationPanel extends StarDistDetectorBa
 		gbcLblCusstomModelFile.anchor = GridBagConstraints.SOUTHWEST;
 		gbcLblCusstomModelFile.insets = new Insets( 0, 5, 0, 5 );
 		gbcLblCusstomModelFile.gridx = 0;
-		gbcLblCusstomModelFile.gridy = 4;
+		gbcLblCusstomModelFile.gridy = 3;
 		add( lblCusstomModelFile, gbcLblCusstomModelFile );
 
 		btnBrowse = new JButton( "Browse" );
@@ -186,7 +168,7 @@ public class StarDistCustomDetectorConfigurationPanel extends StarDistDetectorBa
 		gbcBtnBrowse.anchor = GridBagConstraints.SOUTHEAST;
 		gbcBtnBrowse.gridwidth = 2;
 		gbcBtnBrowse.gridx = 1;
-		gbcBtnBrowse.gridy = 4;
+		gbcBtnBrowse.gridy = 3;
 		add( btnBrowse, gbcBtnBrowse );
 
 		modelFileTextField = new JTextField( "" );
@@ -196,7 +178,7 @@ public class StarDistCustomDetectorConfigurationPanel extends StarDistDetectorBa
 		gbc_textField.insets = new Insets( 0, 5, 5, 5 );
 		gbc_textField.fill = GridBagConstraints.BOTH;
 		gbc_textField.gridx = 0;
-		gbc_textField.gridy = 5;
+		gbc_textField.gridy = 4;
 		add( modelFileTextField, gbc_textField );
 		modelFileTextField.setColumns( 10 );
 
@@ -210,7 +192,7 @@ public class StarDistCustomDetectorConfigurationPanel extends StarDistDetectorBa
 		gbcLblScoreTreshold.anchor = GridBagConstraints.EAST;
 		gbcLblScoreTreshold.insets = new Insets( 5, 5, 5, 5 );
 		gbcLblScoreTreshold.gridx = 0;
-		gbcLblScoreTreshold.gridy = 6;
+		gbcLblScoreTreshold.gridy = 5;
 		add( lblScoreTreshold, gbcLblScoreTreshold );
 
 		ftfScoreThreshold = new JFormattedTextField( THRESHOLD_FORMAT );
@@ -221,7 +203,7 @@ public class StarDistCustomDetectorConfigurationPanel extends StarDistDetectorBa
 		gbcScore.gridwidth = 2;
 		gbcScore.insets = new Insets( 5, 5, 5, 5 );
 		gbcScore.gridx = 1;
-		gbcScore.gridy = 6;
+		gbcScore.gridy = 5;
 		add( ftfScoreThreshold, gbcScore );
 
 		/*
@@ -234,7 +216,7 @@ public class StarDistCustomDetectorConfigurationPanel extends StarDistDetectorBa
 		gbcLblOverlapThreshold.anchor = GridBagConstraints.EAST;
 		gbcLblOverlapThreshold.insets = new Insets( 5, 5, 5, 5 );
 		gbcLblOverlapThreshold.gridx = 0;
-		gbcLblOverlapThreshold.gridy = 7;
+		gbcLblOverlapThreshold.gridy = 6;
 		add( lblOverlapThreshold, gbcLblOverlapThreshold );
 
 		ftfOverlapThreshold = new JFormattedTextField( THRESHOLD_FORMAT );
@@ -245,38 +227,29 @@ public class StarDistCustomDetectorConfigurationPanel extends StarDistDetectorBa
 		gbcOverlap.gridwidth = 2;
 		gbcOverlap.insets = new Insets( 5, 5, 5, 5 );
 		gbcOverlap.gridx = 1;
-		gbcOverlap.gridy = 7;
+		gbcOverlap.gridy = 6;
 		add( ftfOverlapThreshold, gbcOverlap );
 
 		/*
 		 * Preview.
 		 */
 
-		final JButton btnPreview = new JButton( "Preview", PREVIEW_ICON );
-		btnPreview.setFont( FONT );
+		final DetectionPreview detectionPreview = new DetectionPreview(
+				model,
+				settings,
+				getDetectorFactory(),
+				() -> getSettings(),
+				() -> ( settings.imp.getFrame() - 1 ),
+				null );
+
 		final GridBagConstraints gbcBtnPreview = new GridBagConstraints();
-		gbcBtnPreview.gridwidth = 2;
-		gbcBtnPreview.fill = GridBagConstraints.HORIZONTAL;
+		gbcBtnPreview.gridwidth = 3;
+		gbcBtnPreview.fill = GridBagConstraints.BOTH;
 		gbcBtnPreview.anchor = GridBagConstraints.SOUTH;
 		gbcBtnPreview.insets = new Insets( 5, 5, 5, 5 );
-		gbcBtnPreview.gridx = 1;
-		gbcBtnPreview.gridy = 8;
-		add( btnPreview, gbcBtnPreview );
-
-		/*
-		 * Logger.
-		 */
-
-		final JLabelLogger labelLogger = new JLabelLogger();
-		labelLogger.setHorizontalAlignment( SwingConstants.TRAILING );
-		final GridBagConstraints gbcLabelLogger = new GridBagConstraints();
-		gbcLabelLogger.fill = GridBagConstraints.HORIZONTAL;
-		gbcLabelLogger.gridwidth = 3;
-		gbcLabelLogger.gridx = 0;
-		gbcLabelLogger.gridy = 9;
-		gbcLabelLogger.insets = new Insets( 5, 5, 5, 5 );
-		add( labelLogger, gbcLabelLogger );
-		localLogger = labelLogger.getLogger();
+		gbcBtnPreview.gridx = 0;
+		gbcBtnPreview.gridy = 7;
+		add( detectionPreview.getPanel(), gbcBtnPreview );
 
 		/*
 		 * Listeners and specificities.
@@ -307,14 +280,6 @@ public class StarDistCustomDetectorConfigurationPanel extends StarDistDetectorBa
 			}
 		}
 
-		btnPreview.addActionListener( e -> DetectionUtils.preview(
-				model,
-				settings,
-				getDetectorFactory(),
-				getSettings(),
-				settings.imp.getFrame() - 1,
-				localLogger,
-				b -> btnPreview.setEnabled( b ) ) );
 		btnBrowse.addActionListener( l -> browse() );
 	}
 
