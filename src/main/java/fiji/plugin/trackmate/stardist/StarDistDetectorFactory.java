@@ -65,22 +65,25 @@ public class StarDistDetectorFactory< T extends RealType< T > & NativeType< T > 
 
 	/** An html information text. */
 	public static final String INFO_TEXT = "<html>"
-			+ "This detector relies on StarDist to detect cells."
+			+ "This detector relies on StarDist to detect the nuclei of cells."
 			+ "<p>"
 			+ "It only works for 2D images."
 			+ "And for this detector to work, the update sites StartDist and CSBDeep "
 			+ "must be activated in your Fiji installation."
 			+ "<p>"
-			+ "The StarDist versatile model for fluorescencent cells is used, "
-			+ "along with the default parameters. Spots are created from the cell "
+			+ "The StarDist versatile model for fluorescent nuclei is used, "
+			+ "along with the default parameters. Spots are created from the nuclei "
 			+ "segmentation results, with a radius set from the cell area, and a "
-			+ "quality equal to the maximal value of the probability image in the cell. "
+			+ "quality equal to the maximal value of the probability image in the nuclei. "
 			+ "<p>"
-			+ "    "
+			+ "Documentation for this module "
+			+ "<a href=\"https://imagej.net/plugins/trackmate/trackmate-stardist\">on the ImageJ Wiki</a>."
 			+ "<p>"
 			+ "If you use this detector for your work, please be so kind as to "
-			+ "also cite the StarDist IJ paper: <i>Uwe Schmidt, Martin Weigert, Coleman Broaddus, and Gene Myers. "
-			+ "Cell Detection with Star-convex Polygons. MICCAI, Granada, Spain, September 2018.</i>"
+			+ "also cite the StarDist IJ paper: "
+			+ "<a href=\"http://doi.org/10.1007/978-3-030-00934-2_30\">"
+			+ "Uwe Schmidt, Martin Weigert, Coleman Broaddus, and Gene Myers. "
+			+ "Cell Detection with Star-convex Polygons. MICCAI, Granada, Spain, September 2018.</a>"
 			+ "</html>";
 
 	/*

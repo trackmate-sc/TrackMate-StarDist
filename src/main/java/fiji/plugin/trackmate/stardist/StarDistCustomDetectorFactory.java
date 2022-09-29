@@ -84,11 +84,13 @@ public class StarDistCustomDetectorFactory< T extends RealType< T > & NativeType
 			+ "And for this detector to work, the update sites StartDist and CSBDeep "
 			+ "must be activated in your Fiji installation."
 			+ "<p>"
-			+ "    "
+			+ "Documentation for this module "
+			+ "<a href=\"https://imagej.net/plugins/trackmate/trackmate-stardist\">on the ImageJ Wiki</a>."
 			+ "<p>"
 			+ "If you use this detector for your work, please be so kind as to "
-			+ "also cite the StarDist IJ paper: <i>Uwe Schmidt, Martin Weigert, Coleman Broaddus, and Gene Myers. "
-			+ "Cell Detection with Star-convex Polygons. MICCAI, Granada, Spain, September 2018.</i>"
+			+ "also cite the StarDist IJ paper: <a href=\"http://doi.org/10.1007/978-3-030-00934-2_30\">"
+			+ "Uwe Schmidt, Martin Weigert, Coleman Broaddus, and Gene Myers. "
+			+ "Cell Detection with Star-convex Polygons. MICCAI, Granada, Spain, September 2018.</a>"
 			+ "</html>";
 
 	@Override
