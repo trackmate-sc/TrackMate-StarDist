@@ -84,8 +84,9 @@
 		<!-- NB: Deploy releases to the SciJava Maven repository. -->
 		<releaseProfiles>sign,deploy-to-scijava</releaseProfiles>
 
-		<StarDist_.version>0.3.0</StarDist_.version>
-		<csbdeep.version>0.3.4</csbdeep.version>
+		<StarDist_.version>0.3.0-scijava</StarDist_.version>
+		<csbdeep.version>0.6.0</csbdeep.version>
+		<TrackMate.version>7.9.0</TrackMate.version>
 	</properties>
 
 	<dependencies>
@@ -120,7 +121,6 @@
 		<dependency>
 			<groupId>sc.fiji</groupId>
 			<artifactId>TrackMate</artifactId>
-			<version>7.8.1-SNAPSHOT</version>
 		</dependency>
 		
 		<!-- StarDist & friends -->
