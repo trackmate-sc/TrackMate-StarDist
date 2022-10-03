@@ -234,14 +234,6 @@ public class StarDistCustomDetectorConfigurationPanel extends StarDistDetectorBa
 		 * Preview.
 		 */
 
-		final DetectionPreview detectionPreview = new DetectionPreview(
-				model,
-				settings,
-				getDetectorFactory(),
-				() -> getSettings(),
-				() -> ( settings.imp.getFrame() - 1 ),
-				null );
-
 		final GridBagConstraints gbcBtnPreview = new GridBagConstraints();
 		gbcBtnPreview.gridwidth = 3;
 		gbcBtnPreview.fill = GridBagConstraints.BOTH;
@@ -249,6 +241,15 @@ public class StarDistCustomDetectorConfigurationPanel extends StarDistDetectorBa
 		gbcBtnPreview.insets = new Insets( 5, 5, 5, 5 );
 		gbcBtnPreview.gridx = 0;
 		gbcBtnPreview.gridy = 7;
+
+		final DetectionPreview detectionPreview = DetectionPreview.create()
+				.model( model )
+				.settings( settings )
+				.detectorFactory( getDetectorFactory() )
+				.detectionSettingsSupplier( () -> getSettings() )
+				.thresholdTextField( ftfScoreThreshold )
+				.thresholdKey( StarDistCustomDetectorFactory.KEY_SCORE_THRESHOLD )
+				.get();
 		add( detectionPreview.getPanel(), gbcBtnPreview );
 
 		/*

@@ -129,14 +129,6 @@ public class StarDistDetectorConfigurationPanel extends StarDistDetectorBaseConf
 		 * Preview.
 		 */
 
-		final DetectionPreview detectionPreview = new DetectionPreview(
-				model,
-				settings,
-				getDetectorFactory(),
-				() -> getSettings(),
-				() -> ( settings.imp.getFrame() - 1 ),
-				null );
-
 		final GridBagConstraints gbcBtnPreview = new GridBagConstraints();
 		gbcBtnPreview.gridwidth = 3;
 		gbcBtnPreview.fill = GridBagConstraints.BOTH;
@@ -144,11 +136,14 @@ public class StarDistDetectorConfigurationPanel extends StarDistDetectorBaseConf
 		gbcBtnPreview.insets = new Insets( 5, 5, 5, 5 );
 		gbcBtnPreview.gridx = 0;
 		gbcBtnPreview.gridy = 4;
-		add( detectionPreview.getPanel(), gbcBtnPreview );
 
-		/*
-		 * Listeners and specificities.
-		 */
+		final DetectionPreview detectionPreview = DetectionPreview.create()
+				.model( model )
+				.settings( settings )
+				.detectorFactory( getDetectorFactory() )
+				.detectionSettingsSupplier( () -> getSettings() )
+				.get();
+		add( detectionPreview.getPanel(), gbcBtnPreview );
 
 		/*
 		 * Deal with channels: the slider and channel labels are only visible if
