@@ -86,7 +86,7 @@
 
 		<StarDist_.version>0.3.0-scijava</StarDist_.version>
 		<csbdeep.version>0.6.0</csbdeep.version>
-		<TrackMate.version>7.9.0</TrackMate.version>
+		<TrackMate.version>7.10.2</TrackMate.version>
 	</properties>
 
 	<dependencies>
@@ -121,7 +121,6 @@
 		<dependency>
 			<groupId>sc.fiji</groupId>
 			<artifactId>TrackMate</artifactId>
-			<version>7.9.1</version>
 		</dependency>
 		
 		<!-- StarDist & friends -->
