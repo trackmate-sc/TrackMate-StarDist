@@ -109,7 +109,7 @@ public class StarDistCustomDetectorFactory< T extends RealType< T > & NativeType
 		this.starDistRunner = new StarDistRunnerCustom( modelFile, probThresh, nmsThresh );
 		if ( !starDistRunner.initialize() )
 		{
-			errorMessage = starDistRunner.getErrorMessage();
+			errorMessage = "[" + getKey() + "] " + starDistRunner.getErrorMessage();
 			return false;
 		}
 		return true;
@@ -154,18 +154,18 @@ public class StarDistCustomDetectorFactory< T extends RealType< T > & NativeType
 		final String modelFilePath = ( String ) settings.get( KEY_MODEL_FILEPATH );
 		if ( null == modelFilePath )
 		{
-			errorMessage = "Model file path is not set.";
+			errorMessage = "[" + getKey() + "] " + "Model file path is not set.";
 			return false;
 		}
 		final File file = new File( modelFilePath );
 		if ( !file.exists() )
 		{
-			errorMessage = "Model file " + modelFilePath + " does not exist.";
+			errorMessage = "[" + getKey() + "] " + "Model file " + modelFilePath + " does not exist.";
 			return false;
 		}
 		if ( !file.canRead() )
 		{
-			errorMessage = "Model file " + modelFilePath + " exists but cannot be read.";
+			errorMessage = "[" + getKey() + "] " + "Model file " + modelFilePath + " exists but cannot be read.";
 			return false;
 		}
 		return true;
@@ -183,7 +183,7 @@ public class StarDistCustomDetectorFactory< T extends RealType< T > & NativeType
 				&& writeAttribute( settings, element, KEY_OVERLAP_THRESHOLD, Double.class, errorHolder );
 
 		if ( !ok )
-			errorMessage = errorHolder.toString();
+			errorMessage = "[" + getKey() + "] " + errorHolder.toString();
 
 		return ok;
 	}
@@ -202,7 +202,7 @@ public class StarDistCustomDetectorFactory< T extends RealType< T > & NativeType
 
 		if ( !ok )
 		{
-			errorMessage = errorHolder.toString();
+			errorMessage = "[" + getKey() + "] " + errorHolder.toString();
 			return false;
 		}
 		return checkSettings( settings );

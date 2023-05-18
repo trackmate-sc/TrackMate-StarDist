@@ -129,14 +129,13 @@ public class StarDistDetectorFactory< T extends RealType< T > & NativeType< T > 
 		this.starDistRunner = new StarDistRunner();
 		if ( !starDistRunner.initialize() )
 		{
-			errorMessage = starDistRunner.getErrorMessage();
+			errorMessage = "[" + getKey() + "] " + starDistRunner.getErrorMessage();
 			return false;
 		}
 		this.img = img;
 		this.settings = settings;
 		return checkSettings( settings );
 	}
-
 
 	@Override
 	public String getErrorMessage()
@@ -151,7 +150,7 @@ public class StarDistDetectorFactory< T extends RealType< T > & NativeType< T > 
 		final boolean ok = writeTargetChannel( settings, element, errorHolder );
 
 		if ( !ok )
-			errorMessage = errorHolder.toString();
+			errorMessage = "[" + getKey() + "] " + errorHolder.toString();
 
 		return ok;
 	}
@@ -165,7 +164,7 @@ public class StarDistDetectorFactory< T extends RealType< T > & NativeType< T > 
 		ok = ok & readIntegerAttribute( element, settings, KEY_TARGET_CHANNEL, errorHolder );
 		if ( !ok )
 		{
-			errorMessage = errorHolder.toString();
+			errorMessage = "[" + getKey() + "] " + errorHolder.toString();
 			return false;
 		}
 		return checkSettings( settings );
@@ -195,7 +194,7 @@ public class StarDistDetectorFactory< T extends RealType< T > & NativeType< T > 
 		mandatoryKeys.add( KEY_TARGET_CHANNEL );
 		ok = ok & checkMapKeys( settings, mandatoryKeys, null, errorHolder );
 		if ( !ok )
-			errorMessage = errorHolder.toString();
+			errorMessage = "[" + getKey() + "] " + errorHolder.toString();
 
 		return ok;
 	}
