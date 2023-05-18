@@ -1,31 +1,27 @@
 package fiji.plugin.trackmate;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.io.IOException;
 
 import org.scijava.log.LogLevel;
 
-import fiji.plugin.trackmate.stardist.StarDistDetector;
-import fiji.plugin.trackmate.stardist.StarDistRunner;
-import fiji.plugin.trackmate.util.TMUtils;
+import fiji.plugin.trackmate.gui.displaysettings.DisplaySettings;
+import fiji.plugin.trackmate.gui.displaysettings.DisplaySettingsIO;
+import fiji.plugin.trackmate.stardist.StarDist2DZDetectorFactory;
+import fiji.plugin.trackmate.tracking.jaqaman.SimpleSparseLAPTrackerFactory;
+import fiji.plugin.trackmate.visualization.hyperstack.HyperStackDisplayer;
 import ij.IJ;
 import ij.ImagePlus;
-import net.imagej.ImageJ;
-import net.imagej.ImgPlus;
-import net.imagej.axis.Axes;
-import net.imglib2.RandomAccessibleInterval;
+import ij.Prefs;
 import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.RealType;
-import net.imglib2.view.Views;
 
 public class StarDist2DZPlayground
 {
 
-	public static < T extends RealType< T > & NativeType< T > > void main( final String[] args )
+	public static < T extends RealType< T > & NativeType< T > > void main( final String[] args ) throws IOException
 	{
-		final ImageJ ij = new ImageJ();
+		final net.imagej.ImageJ ij = new net.imagej.ImageJ();
 		ij.launch( args );
-
 		ij.log().setLevel( "de.csbdresden.csbdeep.task", LogLevel.ERROR );
 
 		// Open image. It is 3D and has a single time-point.
@@ -33,37 +29,24 @@ public class StarDist2DZPlayground
 		final ImagePlus imp = IJ.openImage( filePath );
 		imp.show();
 
-		// Run StarDist 2D.
-		final double[] calibration = TMUtils.getSpatialCalibration( imp );
-		final ImgPlus< T > img = TMUtils.rawWraps( imp );
-		final StarDistRunner starDistRunner = new StarDistRunner();
-		if ( !starDistRunner.initialize() )
+		final Settings settings = new Settings( imp );
+		settings.detectorFactory = new StarDist2DZDetectorFactory<>();
+		settings.detectorSettings = settings.detectorFactory.getDefaultSettings();
+		settings.trackerFactory = new SimpleSparseLAPTrackerFactory();
+		settings.trackerSettings = settings.trackerFactory.getDefaultSettings();
+
+		final TrackMate trackmate = new TrackMate( settings );
+		trackmate.setNumThreads( Prefs.getThreads() );
+		if ( !trackmate.checkInput() || !trackmate.process() )
 		{
-			System.err.println( starDistRunner.getErrorMessage() );
+			System.err.println( trackmate.getErrorMessage() );
 			return;
 		}
 
-		System.out.println( "Running detection on " + imp );
-		final long start = System.currentTimeMillis();
-		final List< List< Spot > > spots = new ArrayList<>( ( int ) img.dimension( img.dimensionIndex( Axes.Z ) ) );
-		for ( int z = 0; z < img.dimension( img.dimensionIndex( Axes.Z ) ); z++ )
-		{
-			final RandomAccessibleInterval< T > slice = Views.hyperSlice( img, img.dimensionIndex( Axes.Z ), z );
-			final StarDistDetector< T > detector = new StarDistDetector<>( starDistRunner, slice, slice, calibration );
-			if ( !detector.checkInput() || !detector.process() )
-			{
-				System.err.println( detector.getErrorMessage() );
-				return;
-			}
-			final List< Spot > s = detector.getResult();
-			System.out.println( "Slice " + z + " - Found " + s.size() + " 2D spots." );
-			spots.add( s );
-		}
-		final long end = System.currentTimeMillis();
-
-
-		System.out.println( String.format( "Detection finished in %.1f s", ( end - start ) / 1000. ) );
-		System.out.println( "Got " + spots.stream().mapToInt( List::size ).sum() + " 2D spots." );
+		final Model model = trackmate.getModel();
+		final DisplaySettings ds = DisplaySettingsIO.readUserDefault();
+		final SelectionModel selectionModel = new SelectionModel( model );
+		final HyperStackDisplayer view = new HyperStackDisplayer( model, selectionModel, imp, ds );
+		view.render();
 	}
-
 }
