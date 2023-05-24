@@ -41,10 +41,16 @@ public abstract class StarDistDetectorBaseConfigurationPanel extends Configurati
 
 	protected final Model model;
 
-	public StarDistDetectorBaseConfigurationPanel( final Settings settings, final Model model )
+	private final String infoText;
+
+	private final String detectorName;
+
+	public StarDistDetectorBaseConfigurationPanel( final Settings settings, final Model model, final String detectorName, final String infoText )
 	{
 		this.settings = settings;
 		this.model = model;
+		this.detectorName = detectorName;
+		this.infoText = infoText;
 	}
 
 	protected abstract SpotDetectorFactory< ? > getDetectorFactory();
@@ -52,5 +58,15 @@ public abstract class StarDistDetectorBaseConfigurationPanel extends Configurati
 	protected static URL getResource( final String name )
 	{
 		return StarDistDetectorFactory.class.getClassLoader().getResource( name );
+	}
+
+	public String getInfoText()
+	{
+		return infoText;
+	}
+
+	public String getDetectorName()
+	{
+		return detectorName;
 	}
 }

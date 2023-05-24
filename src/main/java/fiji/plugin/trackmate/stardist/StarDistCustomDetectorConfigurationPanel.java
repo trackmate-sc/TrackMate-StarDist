@@ -82,7 +82,7 @@ public class StarDistCustomDetectorConfigurationPanel extends StarDistDetectorBa
 	 */
 	public StarDistCustomDetectorConfigurationPanel( final Settings settings, final Model model )
 	{
-		super( settings, model );
+		super( settings, model, TITLE, StarDistCustomDetectorFactory.INFO_TEXT );
 
 		final GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[] { 200, 0, 32 };
@@ -91,7 +91,7 @@ public class StarDistCustomDetectorConfigurationPanel extends StarDistDetectorBa
 		gridBagLayout.rowWeights = new double[] { 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
 		setLayout( gridBagLayout );
 
-		final JLabel lblStardistDetector = new JLabel( TITLE, ICON, JLabel.RIGHT );
+		final JLabel lblStardistDetector = new JLabel( getDetectorName(), ICON, JLabel.RIGHT );
 		lblStardistDetector.setFont( BIG_FONT );
 		lblStardistDetector.setHorizontalAlignment( SwingConstants.CENTER );
 		final GridBagConstraints gbcLblStardistDetector = new GridBagConstraints();
@@ -113,7 +113,7 @@ public class StarDistCustomDetectorConfigurationPanel extends StarDistDetectorBa
 		gbcLblHelptext.insets = new Insets( 5, 5, 5, 5 );
 		gbcLblHelptext.gridx = 0;
 		gbcLblHelptext.gridy = 1;
-		add( GuiUtils.textInScrollPanel( GuiUtils.infoDisplay( StarDistCustomDetectorFactory.INFO_TEXT ) ),
+		add( GuiUtils.textInScrollPanel( GuiUtils.infoDisplay( getInfoText() ) ),
 				gbcLblHelptext );
 
 		/*

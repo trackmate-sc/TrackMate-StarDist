@@ -12,18 +12,23 @@ import static fiji.plugin.trackmate.util.TMUtils.checkParameter;
 import java.util.Map;
 
 import org.jdom2.Element;
+import org.scijava.Priority;
+import org.scijava.plugin.Plugin;
 
 import fiji.plugin.trackmate.Model;
 import fiji.plugin.trackmate.Settings;
 import fiji.plugin.trackmate.detection.Process2DZ;
 import fiji.plugin.trackmate.detection.SpotDetector;
+import fiji.plugin.trackmate.detection.SpotDetectorFactory;
 import fiji.plugin.trackmate.gui.components.ConfigurationPanel;
 import fiji.plugin.trackmate.tracking.overlap.OverlapTrackerFactory;
+import fiji.plugin.trackmate.util.TMUtils;
 import net.imagej.ImgPlus;
 import net.imglib2.Interval;
 import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.RealType;
 
+@Plugin( type = SpotDetectorFactory.class, priority = Priority.NORMAL - 2. )
 public class StarDist2DZDetectorFactory< T extends RealType< T > & NativeType< T > > extends StarDistDetectorFactory< T >
 {
 
@@ -44,8 +49,8 @@ public class StarDist2DZDetectorFactory< T extends RealType< T > & NativeType< T
 			+ "must be activated in your Fiji installation."
 			+ "<p>"
 			+ "The StarDist versatile model for fluorescent nuclei is used, "
-			+ "along with the default parameters. Spots are created from the nuclei "
-			+ "segmentation results, with a radius set from the cell area, and a "
+			+ "along with the default parameters. Spots are created from the 2D nuclei "
+			+ "segmentation results, merged in 3D objects, and with a "
 			+ "quality equal to the maximal value of the probability image in the nuclei. "
 			+ "<p>"
 			+ "If you use this detector for your work, please be so kind as to "
@@ -70,8 +75,31 @@ public class StarDist2DZDetectorFactory< T extends RealType< T > & NativeType< T
 	@Override
 	public ConfigurationPanel getDetectorConfigurationPanel( final Settings settings, final Model model )
 	{
-		// TODO Configure minIoU and scale params.
-		return super.getDetectorConfigurationPanel( settings, model );
+		return new StarDistDetectorConfigurationPanel( settings, model, StarDist2DZDetectorFactory.NAME, StarDist2DZDetectorFactory.INFO_TEXT )
+		{
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public Map< String, Object > getSettings()
+			{
+				final Map< String, Object > s = super.getSettings();
+				final Map< String, Object > ds = getDefaultSettings();
+				ds.put( KEY_TARGET_CHANNEL, s.get( KEY_TARGET_CHANNEL ) );
+				return ds;
+			}
+
+			@Override
+			protected SpotDetectorFactory< ? > getDetectorFactory()
+			{
+				return StarDist2DZDetectorFactory.this.copy();
+			}
+		};
+	}
+
+	@Override
+	public StarDist2DZDetectorFactory< T > copy()
+	{
+		return new StarDist2DZDetectorFactory<>();
 	}
 
 	@Override
@@ -158,10 +186,12 @@ public class StarDist2DZDetectorFactory< T extends RealType< T > & NativeType< T
 		final Settings s = new Settings();
 		s.detectorFactory = detectorFactory;
 		s.detectorSettings = detectorFactory.getDefaultSettings();
-		s.detectorSettings.put( KEY_TARGET_CHANNEL, settings.get( KEY_TARGET_CHANNEL ) );
+		s.detectorSettings.put( KEY_TARGET_CHANNEL, 0 );
 		s.trackerFactory = trackerFactory;
 		s.trackerSettings = trackerSettings;
 
-		return new Process2DZ<>( img, s, true );
+		final int channel = ( ( Number ) settings.get( KEY_TARGET_CHANNEL ) ).intValue();
+		final ImgPlus< T > hs = TMUtils.hyperSlice( img, channel, frame );
+		return new Process2DZ<>( hs, s, true );
 	}
 }

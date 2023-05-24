@@ -52,9 +52,14 @@ public class StarDistDetectorConfigurationPanel extends StarDistDetectorBaseConf
 
 	private final JSlider sliderChannel;
 
-	public StarDistDetectorConfigurationPanel( final Settings settings, final Model model )
+	public StarDistDetectorConfigurationPanel( final Settings settings, final Model model)
 	{
-		super( settings, model );
+		this( settings, model, TITLE, StarDistDetectorFactory.INFO_TEXT );
+	}
+
+	protected StarDistDetectorConfigurationPanel( final Settings settings, final Model model, final String name, final String infoText )
+	{
+		super( settings, model, name, infoText );
 
 		final GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[] { 200, 0, 32 };
@@ -63,7 +68,7 @@ public class StarDistDetectorConfigurationPanel extends StarDistDetectorBaseConf
 		gridBagLayout.rowWeights = new double[] { 0., 1., 0., 0., 0., 0. };
 		setLayout( gridBagLayout );
 
-		final JLabel lblStardistDetector = new JLabel( TITLE, ICON, JLabel.RIGHT );
+		final JLabel lblStardistDetector = new JLabel( getDetectorName(), ICON, JLabel.RIGHT );
 		lblStardistDetector.setFont( BIG_FONT );
 		lblStardistDetector.setHorizontalAlignment( SwingConstants.CENTER );
 		final GridBagConstraints gbcLblStardistDetector = new GridBagConstraints();
@@ -84,7 +89,7 @@ public class StarDistDetectorConfigurationPanel extends StarDistDetectorBaseConf
 		gbcLblHelptext.insets = new Insets( 5, 5, 5, 5 );
 		gbcLblHelptext.gridx = 0;
 		gbcLblHelptext.gridy = 1;
-		add( GuiUtils.textInScrollPanel( GuiUtils.infoDisplay( StarDistDetectorFactory.INFO_TEXT ) ),
+		add( GuiUtils.textInScrollPanel( GuiUtils.infoDisplay( getInfoText() ) ),
 				gbcLblHelptext );
 
 		/*
