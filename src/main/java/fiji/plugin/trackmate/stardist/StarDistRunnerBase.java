@@ -33,6 +33,8 @@ import java.util.stream.IntStream;
 import org.scijava.Context;
 import org.scijava.command.CommandModule;
 import org.scijava.command.CommandService;
+import org.scijava.log.LogLevel;
+import org.scijava.log.LogService;
 
 import de.csbdresden.csbdeep.commands.GenericNetwork;
 import de.csbdresden.stardist.Candidates;
@@ -125,6 +127,10 @@ public abstract class StarDistRunnerBase
 	 */
 	public boolean initialize()
 	{
+		// Tune down info messages.
+		final LogService log = TMUtils.getContext().getService( LogService.class );
+		log.setLevel( "de.csbdresden.csbdeep.task", LogLevel.ERROR );
+
 		this.errorMessage = null;
 		try
 		{
