@@ -191,7 +191,8 @@ public class StarDist2DZDetectorFactory< T extends RealType< T > & NativeType< T
 		s.trackerSettings = trackerSettings;
 
 		final int channel = ( ( Number ) settings.get( KEY_TARGET_CHANNEL ) ).intValue();
+		final double[] calibration = TMUtils.getSpatialCalibration( img );
 		final ImgPlus< T > hs = TMUtils.hyperSlice( img, channel, frame );
-		return new Process2DZ<>( hs, s, true );
+		return new Process2DZ<>( hs, interval, calibration, s, true );
 	}
 }
