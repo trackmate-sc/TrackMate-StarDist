@@ -23,7 +23,6 @@ package fiji.plugin.trackmate;
 
 import java.io.IOException;
 
-import net.imagej.Dataset;
 import net.imagej.ImageJ;
 
 public class TrackMateStarDistTestDrive
@@ -33,11 +32,11 @@ public class TrackMateStarDistTestDrive
 	{
 		final ImageJ ij = new ImageJ();
 		ij.launch( args );
-		final Dataset dataset = ( Dataset ) ij.io().open( "samples/P31-crop.tif" );
+//		final Dataset dataset = ( Dataset ) ij.io().open( "samples/CTC-Fluo-N3DH-SIM-multiC.tif" );
+//		final Dataset dataset = ( Dataset ) ij.io().open( "samples/P31-crop.tif" );
 //		final Dataset dataset = ( Dataset ) ij.io().open( "C:/Users/tinevez/Desktop/48hpi_DMSO_H3K9me3488_H4K20me3647_20x_3-Image Export-08_16bit_c1.tif" );
-		ij.ui().show( dataset );
-
-		new TrackMatePlugIn().run( null );
+//		ij.ui().show( dataset );
+		new TrackMatePlugIn().run( "../TrackMate/samples/6Feb14FGFonCD1_3_Control_3-1-1.tif" );
 	}
 
 }
