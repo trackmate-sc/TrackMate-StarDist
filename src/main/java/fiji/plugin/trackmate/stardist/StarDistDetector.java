@@ -46,7 +46,7 @@ import net.imglib2.view.Views;
 public class StarDistDetector< T extends RealType< T > & NativeType< T > > implements SpotDetector< T >
 {
 
-	private final static String BASE_ERROR_MESSAGE = "StarDistDetector: ";
+	private final static String BASE_ERROR_MESSAGE = "[StarDistDetector] ";
 
 	protected final RandomAccessible< T > img;
 
@@ -82,12 +82,12 @@ public class StarDistDetector< T extends RealType< T > & NativeType< T > > imple
 	{
 		if ( null == img )
 		{
-			errorMessage = baseErrorMessage + "Image is null.";
+			errorMessage = baseErrorMessage + "Image is null.\n";
 			return false;
 		}
 		if ( img.numDimensions() != 2 )
 		{
-			errorMessage = baseErrorMessage + "Image must be 2D, got " + img.numDimensions() + "D.";
+			errorMessage = baseErrorMessage + "Image must be 2D, got " + img.numDimensions() + "D.\n";
 			return false;
 		}
 		return true;
