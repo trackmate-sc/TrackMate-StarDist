@@ -1,6 +1,7 @@
 package fiji.plugin.trackmate.stardist;
 
 import static fiji.plugin.trackmate.detection.DetectorKeys.KEY_TARGET_CHANNEL;
+import static fiji.plugin.trackmate.detection.ThresholdDetectorFactory.KEY_SMOOTHING_SCALE;
 import static fiji.plugin.trackmate.io.IOUtils.readDoubleAttribute;
 import static fiji.plugin.trackmate.io.IOUtils.writeAttribute;
 import static fiji.plugin.trackmate.tracking.overlap.OverlapTrackerFactory.DEFAULT_MIN_IOU;
@@ -75,25 +76,7 @@ public class StarDist2DZDetectorFactory< T extends RealType< T > & NativeType< T
 	@Override
 	public ConfigurationPanel getDetectorConfigurationPanel( final Settings settings, final Model model )
 	{
-		return new StarDistDetectorConfigurationPanel( settings, model, StarDist2DZDetectorFactory.NAME, StarDist2DZDetectorFactory.INFO_TEXT )
-		{
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			public Map< String, Object > getSettings()
-			{
-				final Map< String, Object > s = super.getSettings();
-				final Map< String, Object > ds = getDefaultSettings();
-				ds.put( KEY_TARGET_CHANNEL, s.get( KEY_TARGET_CHANNEL ) );
-				return ds;
-			}
-
-			@Override
-			protected SpotDetectorFactory< ? > getDetectorFactory()
-			{
-				return StarDist2DZDetectorFactory.this.copy();
-			}
-		};
+		return new StarDist2DZDetectorConfigurationPanel( settings, model );
 	}
 
 	@Override
@@ -108,6 +91,7 @@ public class StarDist2DZDetectorFactory< T extends RealType< T > & NativeType< T
 		final Map< String, Object > s = super.getDefaultSettings();
 		s.put( KEY_MIN_IOU, DEFAULT_MIN_IOU );
 		s.put( KEY_SCALE_FACTOR, DEFAULT_SCALE_FACTOR );
+		s.put( KEY_SMOOTHING_SCALE, -1. );
 		return s;
 	}
 
@@ -191,8 +175,22 @@ public class StarDist2DZDetectorFactory< T extends RealType< T > & NativeType< T
 		s.trackerSettings = trackerSettings;
 
 		final int channel = ( ( Number ) settings.get( KEY_TARGET_CHANNEL ) ).intValue();
+		final double smoothingScale = ( ( Number ) settings.get( KEY_SMOOTHING_SCALE ) ).doubleValue();
+
 		final double[] calibration = TMUtils.getSpatialCalibration( img );
 		final ImgPlus< T > hs = TMUtils.hyperSlice( img, channel, frame );
-		return new Process2DZ<>( hs, interval, calibration, s, true );
+		return new Process2DZ<>( hs, interval, calibration, s, true, smoothingScale );
+	}
+
+	@Override
+	public boolean has3Dsegmentation()
+	{
+		return true;
+	}
+
+	@Override
+	public boolean has2Dsegmentation()
+	{
+		return false;
 	}
 }

@@ -41,6 +41,7 @@ import fiji.plugin.trackmate.Model;
 import fiji.plugin.trackmate.Settings;
 import fiji.plugin.trackmate.detection.SpotDetectorFactory;
 import fiji.plugin.trackmate.gui.GuiUtils;
+import fiji.plugin.trackmate.gui.components.PanelSmoothContour;
 import fiji.plugin.trackmate.util.DetectionPreview;
 
 public class StarDistDetectorConfigurationPanel extends StarDistDetectorBaseConfigurationPanel
@@ -51,6 +52,8 @@ public class StarDistDetectorConfigurationPanel extends StarDistDetectorBaseConf
 	private static final String TITLE = "StarDist detector";
 
 	private final JSlider sliderChannel;
+
+	protected PanelSmoothContour panelSmoothContour;
 
 	public StarDistDetectorConfigurationPanel( final Settings settings, final Model model)
 	{
@@ -131,6 +134,22 @@ public class StarDistDetectorConfigurationPanel extends StarDistDetectorBaseConf
 		add( labelChannel, gbcLabelChannel );
 
 		/*
+		 * Smoothing scale. Will be hidden in this panel, and used by inheriting
+		 * classes.
+		 */
+
+		final double scale = -1.;
+		panelSmoothContour = new PanelSmoothContour( scale, model.getSpaceUnits() );
+		final GridBagConstraints gbcPanelSmooth = new GridBagConstraints();
+		gbcPanelSmooth.gridwidth = 3;
+		gbcPanelSmooth.insets = new Insets( 5, 5, 5, 5 );
+		gbcPanelSmooth.fill = GridBagConstraints.HORIZONTAL;
+		gbcPanelSmooth.gridx = 0;
+		gbcPanelSmooth.gridy = 3;
+		add( panelSmoothContour, gbcPanelSmooth );
+		panelSmoothContour.setVisible( false );
+
+		/*
 		 * Preview.
 		 */
 
@@ -140,7 +159,7 @@ public class StarDistDetectorConfigurationPanel extends StarDistDetectorBaseConf
 		gbcBtnPreview.anchor = GridBagConstraints.SOUTH;
 		gbcBtnPreview.insets = new Insets( 5, 5, 5, 5 );
 		gbcBtnPreview.gridx = 0;
-		gbcBtnPreview.gridy = 4;
+		gbcBtnPreview.gridy = 5;
 
 		final DetectionPreview detectionPreview = DetectionPreview.create()
 				.model( model )
@@ -179,7 +198,7 @@ public class StarDistDetectorConfigurationPanel extends StarDistDetectorBaseConf
 	@Override
 	public Map< String, Object > getSettings()
 	{
-		final HashMap< String, Object > settings = new HashMap<>( 2 );
+		final HashMap< String, Object > settings = new HashMap<>();
 		final int targetChannel = sliderChannel.getValue();
 		settings.put( KEY_TARGET_CHANNEL, targetChannel );
 		return settings;
