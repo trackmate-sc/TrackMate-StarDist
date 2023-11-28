@@ -53,7 +53,7 @@ public class StarDistDetectorConfigurationPanel extends StarDistDetectorBaseConf
 
 	private final JSlider sliderChannel;
 
-	protected PanelSmoothContour panelSmoothContour;
+	protected final PanelSmoothContour panelSmoothContour;
 
 	public StarDistDetectorConfigurationPanel( final Settings settings, final Model model)
 	{
