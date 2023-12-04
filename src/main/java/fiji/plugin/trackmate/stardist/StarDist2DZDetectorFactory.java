@@ -29,7 +29,7 @@ import net.imglib2.Interval;
 import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.RealType;
 
-@Plugin( type = SpotDetectorFactory.class, priority = Priority.NORMAL - 2. )
+@Plugin( type = SpotDetectorFactory.class, priority = Priority.LOW - 2.1 )
 public class StarDist2DZDetectorFactory< T extends RealType< T > & NativeType< T > > extends StarDistDetectorFactory< T >
 {
 

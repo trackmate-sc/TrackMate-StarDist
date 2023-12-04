@@ -36,6 +36,7 @@ import java.util.Map;
 import javax.swing.ImageIcon;
 
 import org.jdom2.Element;
+import org.scijava.Priority;
 import org.scijava.plugin.Plugin;
 
 import fiji.plugin.trackmate.Model;
@@ -49,7 +50,7 @@ import net.imglib2.Interval;
 import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.RealType;
 
-@Plugin( type = SpotDetectorFactory.class )
+@Plugin( type = SpotDetectorFactory.class, priority = Priority.LOW - 2. )
 public class StarDistDetectorFactory< T extends RealType< T > & NativeType< T > > implements SpotDetectorFactory< T >
 {
 
