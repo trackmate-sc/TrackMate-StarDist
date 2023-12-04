@@ -45,7 +45,7 @@ import net.imagej.ImgPlus;
 import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.RealType;
 
-@Plugin( type = SpotDetectorFactory.class, priority = Priority.NORMAL - 1. )
+@Plugin( type = SpotDetectorFactory.class, priority = Priority.LOW - 2.2 )
 public class StarDistCustomDetectorFactory< T extends RealType< T > & NativeType< T > > extends StarDistDetectorFactory< T >
 {
 
