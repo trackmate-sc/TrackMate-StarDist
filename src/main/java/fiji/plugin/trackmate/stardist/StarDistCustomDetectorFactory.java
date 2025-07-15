@@ -1,3 +1,24 @@
+/*-
+ * #%L
+ * TrackMate: your buddy for everyday tracking.
+ * %%
+ * Copyright (C) 2020 - 2023 TrackMate developers.
+ * %%
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public
+ * License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/gpl-3.0.html>.
+ * #L%
+ */
 package fiji.plugin.trackmate.stardist;
 
 import static fiji.plugin.trackmate.detection.DetectorKeys.KEY_TARGET_CHANNEL;
@@ -19,7 +40,7 @@ import org.scijava.plugin.Plugin;
 import fiji.plugin.trackmate.Model;
 import fiji.plugin.trackmate.Settings;
 import fiji.plugin.trackmate.detection.SpotDetectorFactory;
-import fiji.plugin.trackmate.gui.ConfigurationPanel;
+import fiji.plugin.trackmate.gui.components.ConfigurationPanel;
 import net.imagej.ImgPlus;
 import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.RealType;
@@ -62,6 +83,14 @@ public class StarDistCustomDetectorFactory< T extends RealType< T > & NativeType
 			+ "It only works for 2D images."
 			+ "And for this detector to work, the update sites StartDist and CSBDeep "
 			+ "must be activated in your Fiji installation."
+			+ "<p>"
+			+ "Documentation for this module "
+			+ "<a href=\"https://imagej.net/plugins/trackmate/trackmate-stardist\">on the ImageJ Wiki</a>."
+			+ "<p>"
+			+ "If you use this detector for your work, please be so kind as to "
+			+ "also cite the StarDist IJ paper: <a href=\"http://doi.org/10.1007/978-3-030-00934-2_30\">"
+			+ "Uwe Schmidt, Martin Weigert, Coleman Broaddus, and Gene Myers. "
+			+ "Cell Detection with Star-convex Polygons. MICCAI, Granada, Spain, September 2018.</a>"
 			+ "</html>";
 
 	@Override
@@ -83,7 +112,7 @@ public class StarDistCustomDetectorFactory< T extends RealType< T > & NativeType
 			errorMessage = starDistRunner.getErrorMessage();
 			return false;
 		}
-		return checkSettings( settings );
+		return true;
 	}
 
 	@Override
@@ -201,5 +230,11 @@ public class StarDistCustomDetectorFactory< T extends RealType< T > & NativeType
 	public boolean has2Dsegmentation()
 	{
 		return true;
+	}
+
+	@Override
+	public StarDistCustomDetectorFactory< T > copy()
+	{
+		return new StarDistCustomDetectorFactory<>();
 	}
 }

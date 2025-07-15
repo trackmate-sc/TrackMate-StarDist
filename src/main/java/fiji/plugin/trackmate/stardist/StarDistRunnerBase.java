@@ -1,3 +1,24 @@
+/*-
+ * #%L
+ * TrackMate: your buddy for everyday tracking.
+ * %%
+ * Copyright (C) 2020 - 2023 TrackMate developers.
+ * %%
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public
+ * License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/gpl-3.0.html>.
+ * #L%
+ */
 package fiji.plugin.trackmate.stardist;
 
 import java.io.File;
@@ -62,20 +83,18 @@ public abstract class StarDistRunnerBase
 		final boolean normalizeInput = true;
 		final double percentileBottom = 1.0;
 		final double percentileTop = 99.8;
-		final int nTiles = 1;
 		final boolean showCsbdeepProgress = false;
 		final int excludeBoundary = 2;
 		final boolean verbose = false;
 		final String roiPosition = "Hyperstack";
 
 		/*
-		 * CNN parameters. Defaults are good.
+		 * CNN parameters. Defaults are good. N tiles is determined on the fly.
 		 */
 		PARAMS_CNN.put( "normalizeInput", normalizeInput );
 		PARAMS_CNN.put( "percentileBottom", percentileBottom );
 		PARAMS_CNN.put( "percentileTop", percentileTop );
 		PARAMS_CNN.put( "clip", false );
-		PARAMS_CNN.put( "nTiles", nTiles );
 		PARAMS_CNN.put( "batchSize", 1 );
 		PARAMS_CNN.put( "showProgressDialog", showCsbdeepProgress );
 
@@ -139,9 +158,19 @@ public abstract class StarDistRunnerBase
 		return errorMessage;
 	}
 
-	public < T extends Type< T > > Pair< Candidates, RandomAccessibleInterval< FloatType > > run( final RandomAccessibleInterval< T > input )
-	{
+	public < T extends Type< T > > Pair< Candidates, RandomAccessibleInterval< FloatType > > run( final RandomAccessibleInterval< T > input ) {
+
 		this.errorMessage = null;
+
+		/*
+		 * Seems to be the limit for StarDist not to fail. We observed that 1000
+		 * x 1000 tiles were ok, but larger than 1000 lines failed.
+		 */
+
+		final long dim = input.dimension( 0 ) * input.dimension( 1 );
+		final double maxSize = 1_000_000.;
+		final double divisionResults = dim / maxSize;
+		final int nbTiles = ( int ) Math.ceil( divisionResults );
 
 		/*
 		 * Adapt parameters for specific model.
@@ -153,8 +182,10 @@ public abstract class StarDistRunnerBase
 		paramsCNN.put( "blockMultiple", model.sizeDivBy );
 		paramsCNN.put( "overlap", model.tileOverlap );
 		paramsCNN.put( "modelFile", modelFile );
+		paramsCNN.put( "nTiles", nbTiles );
 		paramsNMS.put( "probThresh", model.probThresh );
 		paramsNMS.put( "nmsThresh", model.nmsThresh );
+
 
 		try
 		{
@@ -203,10 +234,6 @@ public abstract class StarDistRunnerBase
 
 	/**
 	 * Copied from Star-dist source code.
-	 * 
-	 * @param prediction
-	 * @param dataset
-	 * @return
 	 */
 	private static Pair< Dataset, Dataset > splitPrediction( final Dataset prediction, final DatasetService dataset )
 	{

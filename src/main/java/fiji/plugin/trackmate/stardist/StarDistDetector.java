@@ -1,3 +1,24 @@
+/*-
+ * #%L
+ * TrackMate: your buddy for everyday tracking.
+ * %%
+ * Copyright (C) 2020 - 2023 TrackMate developers.
+ * %%
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public
+ * License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/gpl-3.0.html>.
+ * #L%
+ */
 package fiji.plugin.trackmate.stardist;
 
 import java.awt.Polygon;
@@ -7,6 +28,7 @@ import java.util.List;
 import de.csbdresden.stardist.Candidates;
 import fiji.plugin.trackmate.Spot;
 import fiji.plugin.trackmate.SpotRoi;
+import fiji.plugin.trackmate.detection.DetectionUtils;
 import fiji.plugin.trackmate.detection.SpotDetector;
 import ij.ImagePlus;
 import ij.gui.PolygonRoi;
@@ -42,11 +64,15 @@ public class StarDistDetector< T extends RealType< T > & NativeType< T > > imple
 
 	protected final StarDistRunnerBase stardistRunner;
 
-	public StarDistDetector( final StarDistRunnerBase stardistRunner, final RandomAccessible< T > img, final Interval interval, final double[] calibration )
+	public StarDistDetector(
+			final StarDistRunnerBase stardistRunner,
+			final RandomAccessible< T > img,
+			final Interval interval,
+			final double[] calibration )
 	{
 		this.stardistRunner = stardistRunner;
 		this.img = img;
-		this.interval = interval;
+		this.interval = DetectionUtils.squeeze( interval );
 		this.calibration = calibration;
 		this.baseErrorMessage = BASE_ERROR_MESSAGE;
 	}
@@ -78,9 +104,10 @@ public class StarDistDetector< T extends RealType< T > & NativeType< T > > imple
 		final long[] min = new long[ interval.numDimensions() ];
 		interval.min( min );
 		final RandomAccessibleInterval< T > input = Views.zeroMin( crop );
-		
+
 		// Launch StarDist.
 		final Pair< Candidates, RandomAccessibleInterval< FloatType > > output = stardistRunner.run( input );
+
 		if ( null == output )
 		{
 			/*
