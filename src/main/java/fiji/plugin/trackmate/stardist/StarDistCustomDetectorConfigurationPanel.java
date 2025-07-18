@@ -8,12 +8,12 @@
  * it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
@@ -28,6 +28,7 @@ import static fiji.plugin.trackmate.gui.Fonts.SMALL_FONT;
 import static fiji.plugin.trackmate.stardist.StarDistCustomDetectorFactory.KEY_MODEL_FILEPATH;
 import static fiji.plugin.trackmate.stardist.StarDistCustomDetectorFactory.KEY_OVERLAP_THRESHOLD;
 import static fiji.plugin.trackmate.stardist.StarDistCustomDetectorFactory.KEY_SCORE_THRESHOLD;
+import static fiji.plugin.trackmate.stardist.StarDistDetectorFactory.ICON;
 
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -52,11 +53,12 @@ import fiji.plugin.trackmate.Model;
 import fiji.plugin.trackmate.Settings;
 import fiji.plugin.trackmate.detection.SpotDetectorFactory;
 import fiji.plugin.trackmate.gui.GuiUtils;
+import fiji.plugin.trackmate.gui.components.ConfigurationPanel;
 import fiji.plugin.trackmate.stardist.util.FileChooser;
 import fiji.plugin.trackmate.stardist.util.FileChooser.DialogType;
 import fiji.plugin.trackmate.util.DetectionPreview;
 
-public class StarDistCustomDetectorConfigurationPanel extends StarDistDetectorBaseConfigurationPanel
+public class StarDistCustomDetectorConfigurationPanel extends ConfigurationPanel
 {
 
 	private static final long serialVersionUID = 1L;
@@ -77,18 +79,12 @@ public class StarDistCustomDetectorConfigurationPanel extends StarDistDetectorBa
 
 	private final JFormattedTextField ftfOverlapThreshold;
 
-	/**
-	 * Create the panel.
-	 */
 	public StarDistCustomDetectorConfigurationPanel( final Settings settings, final Model model )
 	{
-		super( settings, model );
-
 		final GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[] { 200, 0, 32 };
-		gridBagLayout.rowHeights = new int[] { 0, 84, 0, 27, 0, 0, 0, 55, 23 };
+		gridBagLayout.rowHeights = new int[] { 0, 84, 0, 27, 0, 0, 0, 150 };
 		gridBagLayout.columnWeights = new double[] { 1.0, 1.0, 0.0 };
-		gridBagLayout.rowWeights = new double[] { 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
 		setLayout( gridBagLayout );
 
 		final JLabel lblStardistDetector = new JLabel( TITLE, ICON, JLabel.RIGHT );
@@ -113,6 +109,7 @@ public class StarDistCustomDetectorConfigurationPanel extends StarDistDetectorBa
 		gbcLblHelptext.insets = new Insets( 5, 5, 5, 5 );
 		gbcLblHelptext.gridx = 0;
 		gbcLblHelptext.gridy = 1;
+		gbcLblHelptext.weighty = 1.;
 		add( GuiUtils.textInScrollPanel( GuiUtils.infoDisplay( StarDistCustomDetectorFactory.INFO_TEXT ) ),
 				gbcLblHelptext );
 
@@ -311,9 +308,8 @@ public class StarDistCustomDetectorConfigurationPanel extends StarDistDetectorBa
 	public void clean()
 	{}
 
-	@Override
 	@SuppressWarnings( "rawtypes" )
-	protected SpotDetectorFactory< ? > getDetectorFactory()
+	private SpotDetectorFactory< ? > getDetectorFactory()
 	{
 		return new StarDistCustomDetectorFactory();
 	}

@@ -8,12 +8,12 @@
  * it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
@@ -23,25 +23,19 @@ package fiji.plugin.trackmate.stardist;
 
 import static fiji.plugin.trackmate.detection.DetectorKeys.DEFAULT_TARGET_CHANNEL;
 import static fiji.plugin.trackmate.detection.DetectorKeys.KEY_TARGET_CHANNEL;
-import static fiji.plugin.trackmate.io.IOUtils.readIntegerAttribute;
-import static fiji.plugin.trackmate.io.IOUtils.writeTargetChannel;
-import static fiji.plugin.trackmate.util.TMUtils.checkMapKeys;
-import static fiji.plugin.trackmate.util.TMUtils.checkParameter;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.swing.ImageIcon;
 
-import org.jdom2.Element;
 import org.scijava.plugin.Plugin;
 
 import fiji.plugin.trackmate.Model;
 import fiji.plugin.trackmate.Settings;
 import fiji.plugin.trackmate.detection.SpotDetector;
 import fiji.plugin.trackmate.detection.SpotDetectorFactory;
+import fiji.plugin.trackmate.gui.GuiUtils;
 import fiji.plugin.trackmate.gui.components.ConfigurationPanel;
 import fiji.plugin.trackmate.util.TMUtils;
 import net.imagej.ImgPlus;
@@ -52,10 +46,6 @@ import net.imglib2.type.numeric.RealType;
 @Plugin( type = SpotDetectorFactory.class )
 public class StarDistDetectorFactory< T extends RealType< T > & NativeType< T > > implements SpotDetectorFactory< T >
 {
-
-	/*
-	 * CONSTANTS
-	 */
 
 	/** A string key identifying this factory. */
 	public static final String DETECTOR_KEY = "STARDIST_DETECTOR";
@@ -86,26 +76,20 @@ public class StarDistDetectorFactory< T extends RealType< T > & NativeType< T > 
 			+ "Cell Detection with Star-convex Polygons. MICCAI, Granada, Spain, September 2018.</a>"
 			+ "</html>";
 
-	/*
-	 * FIELDS
-	 */
+	public static final String DOC_URL = "https://imagej.net/plugins/trackmate/trackmate-stardist";
 
-	/** The image to operate on. Multiple frames, single channel. */
-	protected ImgPlus< T > img;
-
-	protected Map< String, Object > settings;
-
-	protected String errorMessage;
-
-	protected StarDistRunnerBase starDistRunner;
-
-	/*
-	 * METHODS
-	 */
+	public static final ImageIcon ICON = new ImageIcon( GuiUtils.getResource( "images/TrackMateStarDist-logo100x100.png", StarDistDetectorFactory.class ) );
 
 	@Override
-	public SpotDetector< T > getDetector( final Interval interval, final int frame )
+	public SpotDetector< T > getDetector( final ImgPlus< T > img, final Map< String, Object > settings, final Interval interval, final int frame )
 	{
+		final StarDistRunner starDistRunner = new StarDistRunner();
+		if ( !starDistRunner.initialize() )
+		{
+			System.err.println( starDistRunner.getErrorMessage() );
+			return null;
+		}
+
 		final double[] calibration = TMUtils.getSpatialCalibration( img );
 		final int channel = ( Integer ) settings.get( KEY_TARGET_CHANNEL ) - 1;
 		final ImgPlus< T > imFrame = TMUtils.hyperSlice( img, channel, frame );
@@ -124,51 +108,9 @@ public class StarDistDetectorFactory< T extends RealType< T > & NativeType< T > 
 	}
 
 	@Override
-	public boolean setTarget( final ImgPlus< T > img, final Map< String, Object > settings )
+	public boolean has2Dsegmentation()
 	{
-		this.starDistRunner = new StarDistRunner();
-		if ( !starDistRunner.initialize() )
-		{
-			errorMessage = starDistRunner.getErrorMessage();
-			return false;
-		}
-		this.img = img;
-		this.settings = settings;
-		return checkSettings( settings );
-	}
-
-
-	@Override
-	public String getErrorMessage()
-	{
-		return errorMessage;
-	}
-
-	@Override
-	public boolean marshall( final Map< String, Object > settings, final Element element )
-	{
-		final StringBuilder errorHolder = new StringBuilder();
-		final boolean ok = writeTargetChannel( settings, element, errorHolder );
-
-		if ( !ok )
-			errorMessage = errorHolder.toString();
-
-		return ok;
-	}
-
-	@Override
-	public boolean unmarshall( final Element element, final Map< String, Object > settings )
-	{
-		settings.clear();
-		final StringBuilder errorHolder = new StringBuilder();
-		boolean ok = true;
-		ok = ok & readIntegerAttribute( element, settings, KEY_TARGET_CHANNEL, errorHolder );
-		if ( !ok )
-		{
-			errorMessage = errorHolder.toString();
-			return false;
-		}
-		return checkSettings( settings );
+		return true;
 	}
 
 	@Override
@@ -186,21 +128,6 @@ public class StarDistDetectorFactory< T extends RealType< T > & NativeType< T > 
 	}
 
 	@Override
-	public boolean checkSettings( final Map< String, Object > settings )
-	{
-		boolean ok = true;
-		final StringBuilder errorHolder = new StringBuilder();
-		ok = ok & checkParameter( settings, KEY_TARGET_CHANNEL, Integer.class, errorHolder );
-		final List< String > mandatoryKeys = new ArrayList<>();
-		mandatoryKeys.add( KEY_TARGET_CHANNEL );
-		ok = ok & checkMapKeys( settings, mandatoryKeys, null, errorHolder );
-		if ( !ok )
-			errorMessage = errorHolder.toString();
-
-		return ok;
-	}
-
-	@Override
 	public String getInfoText()
 	{
 		return INFO_TEXT;
@@ -209,7 +136,13 @@ public class StarDistDetectorFactory< T extends RealType< T > & NativeType< T > 
 	@Override
 	public ImageIcon getIcon()
 	{
-		return null;
+		return ICON;
+	}
+
+	@Override
+	public String getUrl()
+	{
+		return DOC_URL;
 	}
 
 	@Override
@@ -222,17 +155,5 @@ public class StarDistDetectorFactory< T extends RealType< T > & NativeType< T > 
 	public String getName()
 	{
 		return NAME;
-	}
-
-	@Override
-	public boolean has2Dsegmentation()
-	{
-		return true;
-	}
-
-	@Override
-	public StarDistDetectorFactory< T > copy()
-	{
-		return new StarDistDetectorFactory<>();
 	}
 }
