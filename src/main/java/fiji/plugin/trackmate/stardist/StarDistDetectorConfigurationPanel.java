@@ -8,12 +8,12 @@
  * it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
@@ -24,6 +24,7 @@ package fiji.plugin.trackmate.stardist;
 import static fiji.plugin.trackmate.detection.DetectorKeys.KEY_TARGET_CHANNEL;
 import static fiji.plugin.trackmate.gui.Fonts.BIG_FONT;
 import static fiji.plugin.trackmate.gui.Fonts.SMALL_FONT;
+import static fiji.plugin.trackmate.stardist.StarDistDetectorFactory.ICON;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -41,9 +42,10 @@ import fiji.plugin.trackmate.Model;
 import fiji.plugin.trackmate.Settings;
 import fiji.plugin.trackmate.detection.SpotDetectorFactory;
 import fiji.plugin.trackmate.gui.GuiUtils;
+import fiji.plugin.trackmate.gui.components.ConfigurationPanel;
 import fiji.plugin.trackmate.util.DetectionPreview;
 
-public class StarDistDetectorConfigurationPanel extends StarDistDetectorBaseConfigurationPanel
+public class StarDistDetectorConfigurationPanel extends ConfigurationPanel
 {
 
 	private static final long serialVersionUID = 1L;
@@ -54,13 +56,10 @@ public class StarDistDetectorConfigurationPanel extends StarDistDetectorBaseConf
 
 	public StarDistDetectorConfigurationPanel( final Settings settings, final Model model )
 	{
-		super( settings, model );
-
 		final GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[] { 200, 0, 32 };
-		gridBagLayout.rowHeights = new int[] { 0, 145, 0, 0, 55, 23 };
+		gridBagLayout.rowHeights = new int[] { 0, 145, 0, 0, 150 };
 		gridBagLayout.columnWeights = new double[] { 0., 1., 0. };
-		gridBagLayout.rowWeights = new double[] { 0., 1., 0., 0., 0., 0. };
 		setLayout( gridBagLayout );
 
 		final JLabel lblStardistDetector = new JLabel( TITLE, ICON, JLabel.RIGHT );
@@ -84,9 +83,14 @@ public class StarDistDetectorConfigurationPanel extends StarDistDetectorBaseConf
 		gbcLblHelptext.insets = new Insets( 5, 5, 5, 5 );
 		gbcLblHelptext.gridx = 0;
 		gbcLblHelptext.gridy = 1;
-		add( GuiUtils.textInScrollPanel( GuiUtils.infoDisplay( StarDistDetectorFactory.INFO_TEXT ) ),
+		gbcLblHelptext.weighty = 1.;
+		add( GuiUtils.textInScrollPanel( GuiUtils.infoDisplay(
+				StarDistDetectorFactory.INFO_TEXT.replace( "</html>", "" )
+						+ "<html>Online documentation: <br/>"
+						+ "<a href='" + StarDistDetectorFactory.DOC_URL + "'>"
+						+ StarDistDetectorFactory.DOC_URL
+						+ "</a></html>" ) ),
 				gbcLblHelptext );
-
 		/*
 		 * Channel selector.
 		 */
@@ -190,9 +194,8 @@ public class StarDistDetectorConfigurationPanel extends StarDistDetectorBaseConf
 	public void clean()
 	{}
 
-	@Override
 	@SuppressWarnings( "rawtypes" )
-	protected SpotDetectorFactory< ? > getDetectorFactory()
+	private SpotDetectorFactory< ? > getDetectorFactory()
 	{
 		return new StarDistDetectorFactory();
 	}

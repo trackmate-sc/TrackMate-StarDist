@@ -8,12 +8,12 @@
  * it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
@@ -43,15 +43,22 @@ public class StarDistTestDrive
 
 	public static < T extends Type< T > > void main( final String[] args ) throws IOException, InterruptedException, ExecutionException
 	{
+		final String filename = "samples/P31-crop-1.tif";
 		final ImageJ ij = new ImageJ();
 		ij.launch( args );
-		final Dataset dataset = ( Dataset ) ij.io().open( "samples/P31-crop-2.tif" );
+		final Dataset dataset = ( Dataset ) ij.io().open( filename );
 		ij.ui().show( dataset );
-
 		@SuppressWarnings( "unchecked" )
 		final RandomAccessibleInterval< T > img = ( RandomAccessibleInterval< T > ) dataset.getImgPlus().getImg();
-		final Pair< Candidates, RandomAccessibleInterval< FloatType > > output = new StarDistRunner().run( img );
 
+		final StarDistRunner runner = new StarDistRunner();
+		final boolean ok = runner.initialize( );
+		if (!ok)
+		{
+			System.err.println( runner.getErrorMessage() );
+			return;
+		}
+		final Pair< Candidates, RandomAccessibleInterval< FloatType > > output = runner.run( img );
 		final Candidates polygons = output.getA();
 
 		final RandomAccessibleInterval< FloatType > probaImg = output.getB();

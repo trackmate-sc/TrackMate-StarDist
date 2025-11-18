@@ -8,12 +8,12 @@
  * it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
@@ -22,26 +22,21 @@
 package fiji.plugin.trackmate.stardist;
 
 import static fiji.plugin.trackmate.detection.DetectorKeys.KEY_TARGET_CHANNEL;
-import static fiji.plugin.trackmate.io.IOUtils.readDoubleAttribute;
-import static fiji.plugin.trackmate.io.IOUtils.readStringAttribute;
-import static fiji.plugin.trackmate.io.IOUtils.writeAttribute;
-import static fiji.plugin.trackmate.util.TMUtils.checkMapKeys;
-import static fiji.plugin.trackmate.util.TMUtils.checkParameter;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
-import org.jdom2.Element;
 import org.scijava.Priority;
 import org.scijava.plugin.Plugin;
 
 import fiji.plugin.trackmate.Model;
 import fiji.plugin.trackmate.Settings;
+import fiji.plugin.trackmate.detection.SpotDetector;
 import fiji.plugin.trackmate.detection.SpotDetectorFactory;
 import fiji.plugin.trackmate.gui.components.ConfigurationPanel;
+import fiji.plugin.trackmate.util.TMUtils;
 import net.imagej.ImgPlus;
+import net.imglib2.Interval;
 import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.RealType;
 
@@ -49,9 +44,7 @@ import net.imglib2.type.numeric.RealType;
 public class StarDistCustomDetectorFactory< T extends RealType< T > & NativeType< T > > extends StarDistDetectorFactory< T >
 {
 
-	/**
-	 * The key to the parameter that stores the model file path.
-	 */
+	/** The key to the parameter that stores the model file path. */
 	public static final String KEY_MODEL_FILEPATH = "MODEL_FILEPATH";
 
 	/**
@@ -94,25 +87,24 @@ public class StarDistCustomDetectorFactory< T extends RealType< T > & NativeType
 			+ "</html>";
 
 	@Override
-	public boolean setTarget( final ImgPlus< T > img, final Map< String, Object > settings )
+	public SpotDetector< T > getDetector( final ImgPlus< T > img, final Map< String, Object > settings, final Interval interval, final int frame )
 	{
-		this.img = img;
-		this.settings = settings;
-		final boolean ok = checkSettings( settings );
-		if ( !ok )
-			return false;
-
 		final String modelFilePath = ( String ) settings.get( KEY_MODEL_FILEPATH );
 		final File modelFile = new File( modelFilePath );
 		final double probThresh = ( double ) settings.get( KEY_SCORE_THRESHOLD );
 		final double nmsThresh = ( double ) settings.get( KEY_OVERLAP_THRESHOLD );
-		this.starDistRunner = new StarDistRunnerCustom( modelFile, probThresh, nmsThresh );
+		final StarDistRunnerCustom starDistRunner = new StarDistRunnerCustom( modelFile, probThresh, nmsThresh );
 		if ( !starDistRunner.initialize() )
 		{
-			errorMessage = starDistRunner.getErrorMessage();
-			return false;
+			System.err.println( starDistRunner.getErrorMessage() );
+			return null;
 		}
-		return true;
+
+		final double[] calibration = TMUtils.getSpatialCalibration( img );
+		final int channel = ( Integer ) settings.get( KEY_TARGET_CHANNEL ) - 1;
+		final ImgPlus< T > imFrame = TMUtils.hyperSlice( img, channel, frame );
+		final StarDistDetector< T > detector = new StarDistDetector<>( starDistRunner, imFrame, interval, calibration );
+		return detector;
 	}
 
 	@Override
@@ -132,80 +124,24 @@ public class StarDistCustomDetectorFactory< T extends RealType< T > & NativeType
 	}
 
 	@Override
-	public boolean checkSettings( final Map< String, Object > settings )
+	public String checkSettings( final Map< String, Object > settings )
 	{
-		boolean ok = true;
-		final StringBuilder errorHolder = new StringBuilder();
-		ok = ok & checkParameter( settings, KEY_TARGET_CHANNEL, Integer.class, errorHolder );
-		ok = ok & checkParameter( settings, KEY_SCORE_THRESHOLD, Double.class, errorHolder );
-		ok = ok & checkParameter( settings, KEY_OVERLAP_THRESHOLD, Double.class, errorHolder );
-		ok = ok & checkParameter( settings, KEY_MODEL_FILEPATH, String.class, errorHolder );
-
-		final List< String > mandatoryKeys = new ArrayList<>();
-		mandatoryKeys.add( KEY_TARGET_CHANNEL );
-		mandatoryKeys.add( KEY_SCORE_THRESHOLD );
-		mandatoryKeys.add( KEY_OVERLAP_THRESHOLD );
-		mandatoryKeys.add( KEY_MODEL_FILEPATH );
-		ok = ok & checkMapKeys( settings, mandatoryKeys, null, errorHolder );
-
-		if ( !ok )
-			errorMessage = errorHolder.toString();
+		final String errorMessage = super.checkSettings( settings );
+		if ( null != errorMessage )
+			return errorMessage;
 
 		final String modelFilePath = ( String ) settings.get( KEY_MODEL_FILEPATH );
 		if ( null == modelFilePath )
-		{
-			errorMessage = "Model file path is not set.";
-			return false;
-		}
+			return "Model file path is not set.";
+
 		final File file = new File( modelFilePath );
 		if ( !file.exists() )
-		{
-			errorMessage = "Model file " + modelFilePath + " does not exist.";
-			return false;
-		}
+			return "Model file " + modelFilePath + " does not exist.";
+
 		if ( !file.canRead() )
-		{
-			errorMessage = "Model file " + modelFilePath + " exists but cannot be read.";
-			return false;
-		}
-		return true;
-	}
+			return "Model file " + modelFilePath + " exists but cannot be read.";
 
-	@Override
-	public boolean marshall( final Map< String, Object > settings, final Element element )
-	{
-		if ( !super.marshall( settings, element ) )
-			return false;
-
-		final StringBuilder errorHolder = new StringBuilder();
-		final boolean ok = writeAttribute( settings, element, KEY_MODEL_FILEPATH, String.class, errorHolder )
-				&& writeAttribute( settings, element, KEY_SCORE_THRESHOLD, Double.class, errorHolder )
-				&& writeAttribute( settings, element, KEY_OVERLAP_THRESHOLD, Double.class, errorHolder );
-
-		if ( !ok )
-			errorMessage = errorHolder.toString();
-
-		return ok;
-	}
-
-	@Override
-	public boolean unmarshall( final Element element, final Map< String, Object > settings )
-	{
-		settings.clear();
-		if ( !super.unmarshall( element, settings ) )
-			return false;
-
-		final StringBuilder errorHolder = new StringBuilder();
-		boolean ok = readStringAttribute( element, settings, KEY_MODEL_FILEPATH, errorHolder );
-		ok = ok & readDoubleAttribute( element, settings, KEY_SCORE_THRESHOLD, errorHolder );
-		ok = ok & readDoubleAttribute( element, settings, KEY_OVERLAP_THRESHOLD, errorHolder );
-
-		if ( !ok )
-		{
-			errorMessage = errorHolder.toString();
-			return false;
-		}
-		return checkSettings( settings );
+		return null;
 	}
 
 	@Override
@@ -230,11 +166,5 @@ public class StarDistCustomDetectorFactory< T extends RealType< T > & NativeType
 	public boolean has2Dsegmentation()
 	{
 		return true;
-	}
-
-	@Override
-	public StarDistCustomDetectorFactory< T > copy()
-	{
-		return new StarDistCustomDetectorFactory<>();
 	}
 }
