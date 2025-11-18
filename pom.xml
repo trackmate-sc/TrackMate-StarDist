@@ -7,7 +7,7 @@
 	<parent>
 		<groupId>org.scijava</groupId>
 		<artifactId>pom-scijava</artifactId>
-		<version>41.0.0</version>
+		<version>43.0.0</version>
 		<relativePath />
 	</parent>
 
@@ -91,7 +91,7 @@
 
 		<StarDist_.version>0.3.0-scijava</StarDist_.version>
 		<csbdeep.version>0.6.0</csbdeep.version>
-		<TrackMate.version>8.0.0-SNAPSHOT</TrackMate.version>
+		<TrackMate.version>8.0.0</TrackMate.version>
 		<protobuf-java.version>3.23.4</protobuf-java.version>
 	</properties>
 
