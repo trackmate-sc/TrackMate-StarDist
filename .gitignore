@@ -3,8 +3,12 @@
 
 ## Eclipse ##
 /.classpath
+/.factorypath
 /.project
 /.settings/
+
+# IntelliJ ##
+/.idea/
 
 ## vim ##
 *.swp
